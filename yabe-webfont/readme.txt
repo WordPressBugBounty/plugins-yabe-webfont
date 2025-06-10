@@ -3,13 +3,13 @@ Contributors: suabahasa, rosua
 Donate link: https://ko-fi.com/Q5Q75XSF7
 Tags: custom fonts, google fonts, adobe fonts, gdpr, dsgvo
 Requires at least: 6.0
-Tested up to: 6.7
-Stable tag: 1.0.70
+Tested up to: 6.8
+Stable tag: 1.0.74
 Requires PHP: 7.4
 License: GPLv3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
-Easy self-host Google Fonts, Adobe Fonts support, or upload custom fonts in WordPress that are integrated into the most popular themes and page builders.
+Easy self-host Google Fonts, Adobe Fonts support, or upload custom fonts in WordPress. Integrated into the most popular themes and page builders.
 
 == Description ==
 
@@ -77,6 +77,14 @@ For instance:
 Free version **1**.0.5
 Pro version **2**.0.5
 
+
+= 1.0.74 =
+* **New**: Google Fonts data are now loaded through local machine instead of using the hosted [Wakufont API](https://github.com/orgrosua/wakufont/tree/symfony).
+
+= 1.0.71 =
+* **Improve**: Remove the "[Yabe]" prefix/label from the font selection list [ticket#172]
+* **Issue**: Compatibility issue with some browsers that doesn't allow to input custom font weight when adding/editing a font on the Yabe Webfont dashboard page [ticket#179]
+* **Dev**: Update dependencies
 
 = 1.0.70 =
 * **Improve**: Test compatibility with WordPress 6.7
