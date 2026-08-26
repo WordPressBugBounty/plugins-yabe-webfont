@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\Finder\Iterator;
+namespace JooosiFonDeps\Symfony\Component\Finder\Iterator;
 
 /**
  * @author Jérémy Derussé <jeremy@derusse.com>
@@ -22,7 +22,7 @@ class LazyIterator implements \IteratorAggregate
     {
         $this->iteratorFactory = $iteratorFactory;
     }
-    public function getIterator() : \Traversable
+    public function getIterator(): \Traversable
     {
         yield from ($this->iteratorFactory)();
     }

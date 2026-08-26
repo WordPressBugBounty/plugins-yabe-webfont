@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\Finder\Iterator;
+namespace JooosiFonDeps\Symfony\Component\Finder\Iterator;
 
 /**
  * PathFilterIterator filters files by path patterns (e.g. some/special/dir).
@@ -30,7 +30,7 @@ class PathFilterIterator extends MultiplePcreFilterIterator
     {
         $filename = $this->current()->getRelativePathname();
         if ('\\' === \DIRECTORY_SEPARATOR) {
-            $filename = \str_replace('\\', '/', $filename);
+            $filename = str_replace('\\', '/', $filename);
         }
         return $this->isAccepted($filename);
     }
@@ -50,6 +50,6 @@ class PathFilterIterator extends MultiplePcreFilterIterator
      */
     protected function toRegex(string $str)
     {
-        return $this->isRegex($str) ? $str : '/' . \preg_quote($str, '/') . '/';
+        return $this->isRegex($str) ? $str : '/' . preg_quote($str, '/') . '/';
     }
 }

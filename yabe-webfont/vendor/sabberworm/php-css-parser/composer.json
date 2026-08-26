@@ -34,12 +34,12 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Sabberworm\\CSS\\": "src\/"
+            "JooosiFonDeps\\Sabberworm\\CSS\\": "src\/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_YabeWebfont\\Sabberworm\\CSS\\Tests\\": "tests\/"
+            "JooosiFonDeps\\Sabberworm\\CSS\\Tests\\": "tests\/"
         }
     },
     "extra": {

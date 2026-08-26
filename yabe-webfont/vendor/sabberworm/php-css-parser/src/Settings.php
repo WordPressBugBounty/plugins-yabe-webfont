@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS;
+namespace JooosiFonDeps\Sabberworm\CSS;
 
 /**
  * Parser settings class.
@@ -38,7 +38,7 @@ class Settings
     public $bLenientParsing = \true;
     private function __construct()
     {
-        $this->bMultibyteSupport = \extension_loaded('mbstring');
+        $this->bMultibyteSupport = extension_loaded('mbstring');
     }
     /**
      * @return self new instance

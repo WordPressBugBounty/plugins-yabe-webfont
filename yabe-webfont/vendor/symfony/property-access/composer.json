@@ -39,7 +39,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Symfony\\Component\\PropertyAccess\\": ""
+            "JooosiFonDeps\\Symfony\\Component\\PropertyAccess\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

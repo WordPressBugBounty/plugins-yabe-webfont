@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Hidehalo\Nanoid;
+namespace JooosiFonDeps\Hidehalo\Nanoid;
 
 class Generator implements GeneratorInterface
 {
@@ -9,6 +9,6 @@ class Generator implements GeneratorInterface
      */
     public function random($size)
     {
-        return \unpack('C*', \random_bytes($size));
+        return unpack('C*', \random_bytes($size));
     }
 }

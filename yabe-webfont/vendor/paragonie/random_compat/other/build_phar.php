@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont;
+namespace JooosiFonDeps;
 
 $dist = \dirname(__DIR__) . '/dist';
 if (!\is_dir($dist)) {

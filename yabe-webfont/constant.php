@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,56 +9,61 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace _YabeWebfont;
+namespace JooosiFonDeps;
 
 /**
  * Plugin constants.
  *
  * @since 2.0.0
  */
-class YABE_WEBFONT
+class JOOOSI_FON
 {
     /**
      * @var string
      */
-    public const FILE = __DIR__ . '/yabe-webfont.php';
+    public const FILE = __DIR__ . '/jooosi-fon.php';
     /**
      * @var string
      */
-    public const VERSION = '1.0.114';
+    public const VERSION = '1.1.0';
     /**
      * @var string
      */
-    public const WP_OPTION = 'yabe_webfont';
+    public const WP_OPTION = 'jooosi_fon';
+    /**
+     * Existing installations used this prefix for persisted options and the
+     * original admin-page slug.
+     *
+     * @todo Remove this legacy option prefix completely in Jooosi Fon 3.0.0.
+     *
+     * @var string
+     */
+    public const LEGACY_WP_OPTION = 'yabe_webfont';
     /**
      * @var string
      */
-    public const DB_TABLE_PREFIX = 'yabe_webfont';
+    public const DB_TABLE_PREFIX = 'jooosi_fon';
     /**
-     * The text domain should use the literal string 'yabe-webfont' as the text domain.
+     * The text domain should use the literal string 'jooosi-fon' as the text domain.
      * This constant is used for reference only and should not be used as the actual text domain.
-     * 
+     *
      * @var string
      */
-    public const TEXT_DOMAIN = 'yabe-webfont';
+    public const TEXT_DOMAIN = 'jooosi-fon';
     /**
      * @var array
      */
-    public const EDD_STORE = ['store_url' => 'https://rosua.org', 'item_id' => 18, 'author' => 'idrosua'];
+    public const EDD_STORE = ['store_url' => 'https://jooo.si', 'item_id' => 18];
     /**
      * @var string
      */
-    public const REST_NAMESPACE = 'yabe-webfont/v1';
+    public const REST_NAMESPACE = 'jooosi-fon/v1';
     /**
      * @var string
      */
-    public const HOSTED_WAKUFONT = 'https://wakufont-hosted.rosua.org';
+    public const PLUGIN_URI = 'https://fon.jooo.si';
     /**
-     * @var string
-     */
-    public const PLUGIN_URI = 'https://webfont.yabe.land';
-    /**
-     * @var 
+     * @var
      */
     public const USER_AGENTS = [
         'WOFF2' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:43.0) Gecko/20100101 Firefox/43.0',
@@ -73,4 +78,20 @@ class YABE_WEBFONT
  *
  * @since 2.0.0
  */
-\class_alias('_YabeWebfont\\YABE_WEBFONT', 'YABE_WEBFONT', \false);
+\class_alias('JooosiFonDeps\JOOOSI_FON', 'JOOOSI_FON', \false);
+/**
+ * The former global constants class is retained for 2.x integrations.
+ *
+ * @todo Remove this legacy class alias completely in Jooosi Fon 3.0.0.
+ */
+if (!\class_exists('JooosiFonDeps\YABE_WEBFONT', \false)) {
+    \class_alias(\JooosiFonDeps\JOOOSI_FON::class, 'JooosiFonDeps\YABE_WEBFONT');
+}
+/**
+ * The developer documentation exposed this utility class before the rebrand.
+ *
+ * @todo Remove this legacy class alias completely in Jooosi Fon 3.0.0.
+ */
+if (!\class_exists('JooosiFonDeps\Yabe\Webfont\Utils\Font', \false)) {
+    \class_alias(\JooosiFon\Utils\Font::class, 'JooosiFonDeps\Yabe\Webfont\Utils\Font');
+}

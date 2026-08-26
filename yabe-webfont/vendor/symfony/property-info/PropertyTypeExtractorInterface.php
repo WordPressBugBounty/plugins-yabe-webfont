@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo;
 
 /**
  * Type Extractor Interface.

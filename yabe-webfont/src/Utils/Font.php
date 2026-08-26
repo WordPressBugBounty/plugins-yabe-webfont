@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,9 +9,10 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Utils;
+namespace JooosiFon\Utils;
 
-use _YabeWebfont\YABE_WEBFONT;
+use JooosiFonDeps\JOOOSI_FON;
+use JooosiFon\Api\Support\FontCodec;
 /**
  * Font utility functions for the plugin.
  *
@@ -19,66 +20,81 @@ use _YabeWebfont\YABE_WEBFONT;
  */
 class Font
 {
-    public static function get_fonts() : array
+    private const CACHE_KEY = 'get_fonts';
+    public static function get_fonts(): array
     {
-        $fonts = \wp_cache_get('get_fonts', YABE_WEBFONT::WP_OPTION);
+        $fonts = wp_cache_get(self::CACHE_KEY, JOOOSI_FON::WP_OPTION);
         if ($fonts === \false) {
             /** @var wpdb $wpdb */
             global $wpdb;
             $fonts = [];
-            $sql = "\n                SELECT * FROM {$wpdb->prefix}yabe_webfont_fonts \n                WHERE status = 1\n                    AND deleted_at IS NULL\n                ORDER BY title ASC\n            ";
+            $sql = "\n                SELECT * FROM {$wpdb->prefix}jooosi_fon_fonts\n                WHERE status = 1\n                    AND deleted_at IS NULL\n                ORDER BY title ASC\n            ";
             $result = $wpdb->get_results($sql);
             foreach ($result as $row) {
-                $f = ['title' => $row->title, 'family' => $row->family, 'type' => $row->type, 'slug' => $row->slug, 'css' => ['slug' => self::slugify($row->family), 'custom_property' => self::css_custom_property($row->family), 'variable' => self::css_variable($row->family)], 'variants' => [], 'fallback_family' => null];
-                try {
-                    $font_faces = \json_decode($row->font_faces, null, 512, \JSON_THROW_ON_ERROR);
-                } catch (\JsonException $e) {
-                    $font_faces = \json_decode(\gzuncompress(\base64_decode($row->font_faces)), null, 512, \JSON_THROW_ON_ERROR);
-                }
+                $f = ['title' => $row->title, 'family' => $row->family, 'type' => $row->type, 'slug' => $row->slug, 'css' => ['slug' => self::slugify($row->family), 'custom_property' => self::css_custom_property($row->family), 'legacy_custom_property' => self::legacy_css_custom_property($row->family), 'variable' => self::css_variable($row->family)], 'variants' => [], 'fallback_family' => null];
+                $font_faces = FontCodec::decode((string) $row->font_faces);
                 foreach ($font_faces as $font_face) {
+                    if (property_exists($font_face, 'isEnabled') && filter_var($font_face->isEnabled, \FILTER_VALIDATE_BOOLEAN) !== \true) {
+                        continue;
+                    }
                     $f['variants'][] = ['weight' => $font_face->weight, 'style' => $font_face->style];
                 }
                 $selectorParts = [];
-                try {
-                    $metadata = \json_decode($row->metadata, null, 512, \JSON_THROW_ON_ERROR);
-                } catch (\JsonException $e) {
-                    $metadata = \json_decode(\gzuncompress(\base64_decode($row->metadata)), null, 512, \JSON_THROW_ON_ERROR);
-                }
+                $metadata = FontCodec::decode((string) $row->metadata);
                 // if property selector is exists
-                if (\property_exists($metadata, 'selector') && $metadata->selector) {
-                    $selectorParts = \explode('|', $metadata->selector);
-                    $selectorParts = \array_map('trim', $selectorParts);
-                    $selectorParts = \array_filter($selectorParts);
+                if (property_exists($metadata, 'selector') && $metadata->selector) {
+                    $selectorParts = explode('|', $metadata->selector);
+                    $selectorParts = array_map('trim', $selectorParts);
+                    $selectorParts = array_filter($selectorParts);
                     $f['fallback_family'] = $selectorParts[1] ?? null;
                 }
                 $fonts[] = $f;
             }
-            \wp_cache_set('get_fonts', $fonts, YABE_WEBFONT::WP_OPTION);
+            wp_cache_set(self::CACHE_KEY, $fonts, JOOOSI_FON::WP_OPTION);
         }
         return $fonts;
     }
     /**
-     * @param string $value font family name
-     * @return string css custom property wrapped with variable function. e.g. `var(--ywf--family-open-sans)` for `Open Sans`
+     * Invalidate font data consumed by integrations and WordPress theme.json.
      */
-    public static function css_variable(string $value) : string
+    public static function clear_cache(): void
     {
-        return \sprintf('var(%s)', self::css_custom_property($value));
+        wp_cache_delete(self::CACHE_KEY, JOOOSI_FON::WP_OPTION);
+        if (method_exists(\WP_Theme_JSON_Resolver::class, 'clean_cached_data')) {
+            \WP_Theme_JSON_Resolver::clean_cached_data();
+        }
     }
     /**
      * @param string $value font family name
-     * @return string css custom property. e.g. `--ywf--family-open-sans` for `Open Sans`
+     * @return string css custom property wrapped with variable function. e.g. `var(--jf--family-open-sans)` for `Open Sans`
      */
-    public static function css_custom_property(string $value) : string
+    public static function css_variable(string $value): string
     {
-        return \sprintf('--ywf--family-%s', self::slugify($value));
+        return sprintf('var(%s)', self::css_custom_property($value));
+    }
+    /**
+     * @param string $value font family name
+     * @return string css custom property. e.g. `--jf--family-open-sans` for `Open Sans`
+     */
+    public static function css_custom_property(string $value): string
+    {
+        return sprintf('--jf--family-%s', self::slugify($value));
+    }
+    /**
+     * Return the pre-rebrand property name retained as a generated CSS alias.
+     *
+     * @todo Remove this legacy CSS property alias completely in Jooosi Fon 3.0.0.
+     */
+    public static function legacy_css_custom_property(string $value): string
+    {
+        return sprintf('--ywf--family-%s', self::slugify($value));
     }
     /**
      * @param string $value font family name
      * @return string slugified string. e.g. `open-sans` for `Open Sans`
      */
-    public static function slugify(string $value) : string
+    public static function slugify(string $value): string
     {
-        return \preg_replace('#[^a-zA-Z0-9\\-_]+#', '-', \strtolower($value));
+        return preg_replace('#[^a-zA-Z0-9\-_]+#', '-', strtolower($value));
     }
 }

@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\Finder\Iterator;
+namespace JooosiFonDeps\Symfony\Component\Finder\Iterator;
 
-use _YabeWebfont\Symfony\Component\Finder\Comparator\NumberComparator;
+use JooosiFonDeps\Symfony\Component\Finder\Comparator\NumberComparator;
 /**
  * SizeRangeFilterIterator filters out files that are not in the given size range.
  *

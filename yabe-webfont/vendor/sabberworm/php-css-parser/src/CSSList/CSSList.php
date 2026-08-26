@@ -1,27 +1,27 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\CSSList;
+namespace JooosiFonDeps\Sabberworm\CSS\CSSList;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\Comment\Commentable;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\SourceException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use _YabeWebfont\Sabberworm\CSS\Property\AtRule;
-use _YabeWebfont\Sabberworm\CSS\Property\Charset;
-use _YabeWebfont\Sabberworm\CSS\Property\CSSNamespace;
-use _YabeWebfont\Sabberworm\CSS\Property\Import;
-use _YabeWebfont\Sabberworm\CSS\Property\Selector;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\AtRuleSet;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\DeclarationBlock;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\RuleSet;
-use _YabeWebfont\Sabberworm\CSS\Settings;
-use _YabeWebfont\Sabberworm\CSS\Value\CSSString;
-use _YabeWebfont\Sabberworm\CSS\Value\URL;
-use _YabeWebfont\Sabberworm\CSS\Value\Value;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Commentable;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\SourceException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\Property\AtRule;
+use JooosiFonDeps\Sabberworm\CSS\Property\Charset;
+use JooosiFonDeps\Sabberworm\CSS\Property\CSSNamespace;
+use JooosiFonDeps\Sabberworm\CSS\Property\Import;
+use JooosiFonDeps\Sabberworm\CSS\Property\Selector;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\AtRuleSet;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\DeclarationBlock;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\RuleSet;
+use JooosiFonDeps\Sabberworm\CSS\Settings;
+use JooosiFonDeps\Sabberworm\CSS\Value\CSSString;
+use JooosiFonDeps\Sabberworm\CSS\Value\URL;
+use JooosiFonDeps\Sabberworm\CSS\Value\Value;
 /**
  * This is the most generic container available. It can contain `DeclarationBlock`s (rule sets with a selector),
  * `RuleSet`s as well as other `CSSList` objects.
@@ -68,13 +68,13 @@ abstract class CSSList implements Renderable, Commentable
     public static function parseList(ParserState $oParserState, CSSList $oList)
     {
         $bIsRoot = $oList instanceof Document;
-        if (\is_string($oParserState)) {
+        if (is_string($oParserState)) {
             $oParserState = new ParserState($oParserState, Settings::create());
         }
         $bLenientParsing = $oParserState->getSettings()->bLenientParsing;
         $aComments = [];
         while (!$oParserState->isEnd()) {
-            $aComments = \array_merge($aComments, $oParserState->consumeWhiteSpace());
+            $aComments = array_merge($aComments, $oParserState->consumeWhiteSpace());
             $oListItem = null;
             if ($bLenientParsing) {
                 try {
@@ -116,7 +116,7 @@ abstract class CSSList implements Renderable, Commentable
                 if (!$bIsRoot) {
                     throw new UnexpectedTokenException('@charset may only occur in root document', '', 'custom', $oParserState->currentLine());
                 }
-                if (\count($oList->getContents()) > 0) {
+                if (count($oList->getContents()) > 0) {
                     throw new UnexpectedTokenException('@charset must be the first parseable token in a document', '', 'custom', $oParserState->currentLine());
                 }
                 $oParserState->setCharset($oAtRule->getCharset());
@@ -157,7 +157,7 @@ abstract class CSSList implements Renderable, Commentable
             $oParserState->consumeWhiteSpace();
             $sMediaQuery = null;
             if (!$oParserState->comes(';')) {
-                $sMediaQuery = \trim($oParserState->consumeUntil([';', ParserState::EOF]));
+                $sMediaQuery = trim($oParserState->consumeUntil([';', ParserState::EOF]));
             }
             $oParserState->consumeUntil([';', ParserState::EOF], \true, \true);
             return new Import($oLocation, $sMediaQuery ?: null, $iIdentifierLineNum);
@@ -169,7 +169,7 @@ abstract class CSSList implements Renderable, Commentable
         } elseif (self::identifierIs($sIdentifier, 'keyframes')) {
             $oResult = new KeyFrame($iIdentifierLineNum);
             $oResult->setVendorKeyFrame($sIdentifier);
-            $oResult->setAnimationName(\trim($oParserState->consumeUntil('{', \false, \true)));
+            $oResult->setAnimationName(trim($oParserState->consumeUntil('{', \false, \true)));
             CSSList::parseList($oParserState, $oResult);
             if ($oParserState->comes('}')) {
                 $oParserState->consume('}');
@@ -183,7 +183,7 @@ abstract class CSSList implements Renderable, Commentable
                 $mUrl = Value::parsePrimitiveValue($oParserState);
             }
             $oParserState->consumeUntil([';', ParserState::EOF], \true, \true);
-            if ($sPrefix !== null && !\is_string($sPrefix)) {
+            if ($sPrefix !== null && !is_string($sPrefix)) {
                 throw new UnexpectedTokenException('Wrong namespace prefix', $sPrefix, 'custom', $iIdentifierLineNum);
             }
             if (!($mUrl instanceof CSSString || $mUrl instanceof URL)) {
@@ -192,8 +192,8 @@ abstract class CSSList implements Renderable, Commentable
             return new CSSNamespace($mUrl, $sPrefix, $iIdentifierLineNum);
         } else {
             // Unknown other at rule (font-face or such)
-            $sArgs = \trim($oParserState->consumeUntil('{', \false, \true));
-            if (\substr_count($sArgs, "(") != \substr_count($sArgs, ")")) {
+            $sArgs = trim($oParserState->consumeUntil('{', \false, \true));
+            if (substr_count($sArgs, "(") != substr_count($sArgs, ")")) {
                 if ($oParserState->getSettings()->bLenientParsing) {
                     return null;
                 } else {
@@ -201,7 +201,7 @@ abstract class CSSList implements Renderable, Commentable
                 }
             }
             $bUseRuleSet = \true;
-            foreach (\explode('/', AtRule::BLOCK_RULES) as $sBlockRuleName) {
+            foreach (explode('/', AtRule::BLOCK_RULES) as $sBlockRuleName) {
                 if (self::identifierIs($sIdentifier, $sBlockRuleName)) {
                     $bUseRuleSet = \false;
                     break;
@@ -231,7 +231,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     private static function identifierIs($sIdentifier, $sMatch)
     {
-        return \strcasecmp($sIdentifier, $sMatch) === 0 ?: \preg_match("/^(-\\w+-)?{$sMatch}\$/i", $sIdentifier) === 1;
+        return strcasecmp($sIdentifier, $sMatch) === 0 ?: preg_match("/^(-\\w+-)?{$sMatch}\$/i", $sIdentifier) === 1;
     }
     /**
      * @return int
@@ -249,7 +249,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function prepend($oItem)
     {
-        \array_unshift($this->aContents, $oItem);
+        array_unshift($this->aContents, $oItem);
     }
     /**
      * Appends an item to the list of contents.
@@ -273,7 +273,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function splice($iOffset, $iLength = null, $mReplacement = null)
     {
-        \array_splice($this->aContents, $iOffset, $iLength, $mReplacement);
+        array_splice($this->aContents, $iOffset, $iLength, $mReplacement);
     }
     /**
      * Inserts an item in the CSS list before its sibling. If the desired sibling cannot be found,
@@ -284,7 +284,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function insertBefore($item, $sibling)
     {
-        if (\in_array($sibling, $this->aContents, \true)) {
+        if (in_array($sibling, $this->aContents, \true)) {
             $this->replace($sibling, [$item, $sibling]);
         } else {
             $this->append($item);
@@ -301,7 +301,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function remove($oItemToRemove)
     {
-        $iKey = \array_search($oItemToRemove, $this->aContents, \true);
+        $iKey = array_search($oItemToRemove, $this->aContents, \true);
         if ($iKey !== \false) {
             unset($this->aContents[$iKey]);
             return \true;
@@ -319,12 +319,12 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function replace($oOldItem, $mNewItem)
     {
-        $iKey = \array_search($oOldItem, $this->aContents, \true);
+        $iKey = array_search($oOldItem, $this->aContents, \true);
         if ($iKey !== \false) {
-            if (\is_array($mNewItem)) {
-                \array_splice($this->aContents, $iKey, 1, $mNewItem);
+            if (is_array($mNewItem)) {
+                array_splice($this->aContents, $iKey, 1, $mNewItem);
             } else {
-                \array_splice($this->aContents, $iKey, 1, [$mNewItem]);
+                array_splice($this->aContents, $iKey, 1, [$mNewItem]);
             }
             return \true;
         }
@@ -353,8 +353,8 @@ abstract class CSSList implements Renderable, Commentable
         if ($mSelector instanceof DeclarationBlock) {
             $mSelector = $mSelector->getSelectors();
         }
-        if (!\is_array($mSelector)) {
-            $mSelector = \explode(',', $mSelector);
+        if (!is_array($mSelector)) {
+            $mSelector = explode(',', $mSelector);
         }
         foreach ($mSelector as $iKey => &$mSel) {
             if (!$mSel instanceof Selector) {
@@ -397,7 +397,7 @@ abstract class CSSList implements Renderable, Commentable
             $oNextLevel = $oOutputFormat->nextLevel();
         }
         foreach ($this->aContents as $oContent) {
-            $sRendered = $oOutputFormat->safely(function () use($oNextLevel, $oContent) {
+            $sRendered = $oOutputFormat->safely(function () use ($oNextLevel, $oContent) {
                 return $oContent->render($oNextLevel);
             });
             if ($sRendered === null) {
@@ -422,7 +422,7 @@ abstract class CSSList implements Renderable, Commentable
      *
      * @return bool
      */
-    public abstract function isRootList();
+    abstract public function isRootList();
     /**
      * Returns the stored items.
      *
@@ -439,7 +439,7 @@ abstract class CSSList implements Renderable, Commentable
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<array-key, Comment>

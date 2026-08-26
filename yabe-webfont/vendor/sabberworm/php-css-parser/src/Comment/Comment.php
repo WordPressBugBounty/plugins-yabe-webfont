@@ -1,9 +1,9 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Comment;
+namespace JooosiFonDeps\Sabberworm\CSS\Comment;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
 class Comment implements Renderable
 {
     /**

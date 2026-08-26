@@ -1,9 +1,9 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\RuleSet;
+namespace JooosiFonDeps\Sabberworm\CSS\RuleSet;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Property\AtRule;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Property\AtRule;
 /**
  * This class represents rule sets for generic at-rules which are not covered by specific classes, i.e., not
  * `@import`, `@charset` or `@media`.

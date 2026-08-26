@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo;
 
 /**
  * Extract write information for the property of a class.
@@ -20,5 +20,5 @@ interface PropertyWriteInfoExtractorInterface
     /**
      * Get write information object for a given property of a class.
      */
-    public function getWriteInfo(string $class, string $property, array $context = []) : ?PropertyWriteInfo;
+    public function getWriteInfo(string $class, string $property, array $context = []): ?PropertyWriteInfo;
 }

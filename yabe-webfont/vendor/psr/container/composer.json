@@ -22,7 +22,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Psr\\Container\\": "src\/"
+            "JooosiFonDeps\\Psr\\Container\\": "src\/"
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Core;
+namespace JooosiFon\Core;
 
 /**
  * @author Joshua Gugun Siagian <suabahasa@gmail.com>
@@ -18,6 +18,6 @@ class Runtime
 {
     public function __construct()
     {
-        new \Yabe\Webfont\Core\Frontpage();
+        new \JooosiFon\Core\Frontpage();
     }
 }

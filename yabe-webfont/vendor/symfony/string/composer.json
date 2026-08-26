@@ -41,7 +41,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Symfony\\Component\\String\\": ""
+            "JooosiFonDeps\\Symfony\\Component\\String\\": ""
         },
         "files": [
             "Resources\/functions.php"

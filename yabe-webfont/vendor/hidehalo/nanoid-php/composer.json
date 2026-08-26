@@ -38,12 +38,12 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Hidehalo\\Nanoid\\": "src"
+            "JooosiFonDeps\\Hidehalo\\Nanoid\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "_YabeWebfont\\Hidehalo\\Nanoid\\Test\\": "tests"
+            "JooosiFonDeps\\Hidehalo\\Nanoid\\Test\\": "tests"
         }
     },
     "scripts": {

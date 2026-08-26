@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Psr\Container;
+namespace JooosiFonDeps\Psr\Container;
 
 use Throwable;
 /**

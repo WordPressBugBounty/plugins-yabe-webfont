@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont;
+namespace JooosiFonDeps;
 
 /**
  * Random_* Compatibility Library

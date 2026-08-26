@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,9 +9,9 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Utils;
+namespace JooosiFon\Utils;
 
-use _YabeWebfont\YABE_WEBFONT;
+use JooosiFonDeps\JOOOSI_FON;
 /**
  * Manage the plugin's notices for the wp-admin page.
  *
@@ -38,27 +38,27 @@ class Notice
     /**
      * @var string
      */
-    public const OPTION_NAME = YABE_WEBFONT::WP_OPTION . '_notices';
+    public const OPTION_NAME = JOOOSI_FON::WP_OPTION . '_notices';
     /**
      * Get lists of notices.
      */
-    public static function get_lists(?bool $purge = \true) : array
+    public static function get_lists(?bool $purge = \true): array
     {
-        $notices = \get_option(self::OPTION_NAME, []);
+        $notices = get_option(self::OPTION_NAME, []);
         if ($purge) {
-            \update_option(self::OPTION_NAME, []);
+            update_option(self::OPTION_NAME, []);
         }
         return $notices;
     }
-    public static function add(string $status, string $message, ?string $key = null, bool $unique = \false) : void
+    public static function add(string $status, string $message, ?string $key = null, bool $unique = \false): void
     {
-        $notices = \get_option(self::OPTION_NAME, []);
+        $notices = get_option(self::OPTION_NAME, []);
         $payload = ['status' => $status, 'message' => $message];
         if ($unique) {
             if ($key && isset($notices[$key])) {
                 return;
             }
-            if (\in_array(['status' => $status, 'message' => $message], $notices, \true)) {
+            if (in_array(['status' => $status, 'message' => $message], $notices, \true)) {
                 return;
             }
         }
@@ -67,40 +67,40 @@ class Notice
         } else {
             $notices[] = $payload;
         }
-        \update_option(self::OPTION_NAME, $notices);
+        update_option(self::OPTION_NAME, $notices);
     }
     /**
      * Add bulk notices.
      *
      * @param string|array $messages a message or an array of messages to add.
      */
-    public static function adds(string $status, $messages) : void
+    public static function adds(string $status, $messages): void
     {
-        if (!\is_array($messages)) {
+        if (!is_array($messages)) {
             $messages = [$messages];
         }
         foreach ($messages as $message) {
-            if (!\is_array($message)) {
+            if (!is_array($message)) {
                 self::add($status, $message);
             } else {
                 self::add($status, ...$message);
             }
         }
     }
-    public static function success(string $message, ?string $key = null, bool $unique = \false) : void
+    public static function success(string $message, ?string $key = null, bool $unique = \false): void
     {
-        self::add(self::SUCCESS, ...\func_get_args());
+        self::add(self::SUCCESS, ...func_get_args());
     }
-    public static function warning(string $message, ?string $key = null, bool $unique = \false) : void
+    public static function warning(string $message, ?string $key = null, bool $unique = \false): void
     {
-        self::add(self::WARNING, ...\func_get_args());
+        self::add(self::WARNING, ...func_get_args());
     }
-    public static function info(string $message, ?string $key = null, bool $unique = \false) : void
+    public static function info(string $message, ?string $key = null, bool $unique = \false): void
     {
-        self::add(self::INFO, ...\func_get_args());
+        self::add(self::INFO, ...func_get_args());
     }
-    public static function error(string $message, ?string $key = null, bool $unique = \false) : void
+    public static function error(string $message, ?string $key = null, bool $unique = \false): void
     {
-        self::add(self::ERROR, ...\func_get_args());
+        self::add(self::ERROR, ...func_get_args());
     }
 }

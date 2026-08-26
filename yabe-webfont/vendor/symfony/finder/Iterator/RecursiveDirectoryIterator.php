@@ -8,10 +8,10 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\Finder\Iterator;
+namespace JooosiFonDeps\Symfony\Component\Finder\Iterator;
 
-use _YabeWebfont\Symfony\Component\Finder\Exception\AccessDeniedException;
-use _YabeWebfont\Symfony\Component\Finder\SplFileInfo;
+use JooosiFonDeps\Symfony\Component\Finder\Exception\AccessDeniedException;
+use JooosiFonDeps\Symfony\Component\Finder\SplFileInfo;
 /**
  * Extends the \RecursiveDirectoryIterator to support relative paths.
  *
@@ -55,7 +55,7 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
     public function current()
     {
         // the logic here avoids redoing the same work in all iterations
-        if (null === ($subPathname = $this->subPath)) {
+        if (null === $subPathname = $this->subPath) {
             $subPathname = $this->subPath = $this->getSubPath();
         }
         if ('' !== $subPathname) {
@@ -63,7 +63,7 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
         }
         $subPathname .= $this->getFilename();
         $basePath = $this->rootPath;
-        if ('/' !== $basePath && !\str_ends_with($basePath, $this->directorySeparator) && !\str_ends_with($basePath, '/')) {
+        if ('/' !== $basePath && !str_ends_with($basePath, $this->directorySeparator) && !str_ends_with($basePath, '/')) {
             $basePath .= $this->directorySeparator;
         }
         return new SplFileInfo($basePath . $subPathname, $this->subPath, $subPathname);

@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Parsing;
+namespace JooosiFonDeps\Sabberworm\CSS\Parsing;
 
 /**
  * Thrown if the CSS parser encounters end of file it did not expect.

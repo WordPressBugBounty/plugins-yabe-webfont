@@ -1,10 +1,10 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Property;
+namespace JooosiFonDeps\Sabberworm\CSS\Property;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Value\URL;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Value\URL;
 /**
  * Class representing an `@import` rule.
  */
@@ -97,7 +97,7 @@ class Import implements AtRule
     {
         $aResult = [$this->oLocation];
         if ($this->sMediaQuery) {
-            \array_push($aResult, $this->sMediaQuery);
+            array_push($aResult, $this->sMediaQuery);
         }
         return $aResult;
     }
@@ -108,7 +108,7 @@ class Import implements AtRule
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<array-key, Comment>

@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS;
+namespace JooosiFonDeps\Sabberworm\CSS;
 
 interface Renderable
 {

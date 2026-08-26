@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Comment;
+namespace JooosiFonDeps\Sabberworm\CSS\Comment;
 
 interface Commentable
 {

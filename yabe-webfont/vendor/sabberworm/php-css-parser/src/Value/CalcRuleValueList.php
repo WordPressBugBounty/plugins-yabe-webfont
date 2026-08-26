@@ -1,8 +1,8 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
 class CalcRuleValueList extends RuleValueList
 {
     /**

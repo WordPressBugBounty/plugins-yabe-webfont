@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo\Extractor;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo\Extractor;
 
-use _YabeWebfont\Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
+use JooosiFonDeps\Symfony\Component\PropertyInfo\PropertyTypeExtractorInterface;
 /**
  * Extracts the constructor argument type using ConstructorArgumentTypeExtractorInterface implementations.
  *
@@ -29,7 +29,7 @@ final class ConstructorExtractor implements PropertyTypeExtractorInterface
     /**
      * {@inheritdoc}
      */
-    public function getTypes(string $class, string $property, array $context = []) : ?array
+    public function getTypes(string $class, string $property, array $context = []): ?array
     {
         foreach ($this->extractors as $extractor) {
             $value = $extractor->getTypesFromConstructor($class, $property);

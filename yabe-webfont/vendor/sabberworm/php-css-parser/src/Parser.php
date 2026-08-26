@@ -1,10 +1,10 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS;
+namespace JooosiFonDeps\Sabberworm\CSS;
 
-use _YabeWebfont\Sabberworm\CSS\CSSList\Document;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\SourceException;
+use JooosiFonDeps\Sabberworm\CSS\CSSList\Document;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\SourceException;
 /**
  * This class parses CSS from text into a data structure.
  */

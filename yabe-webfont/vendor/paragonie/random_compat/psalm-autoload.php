@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont;
+namespace JooosiFonDeps;
 
 require_once 'lib/byte_safe_strings.php';
 require_once 'lib/cast_to_int.php';

@@ -1,14 +1,14 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\CSSList;
+namespace JooosiFonDeps\Sabberworm\CSS\CSSList;
 
-use _YabeWebfont\Sabberworm\CSS\Property\Selector;
-use _YabeWebfont\Sabberworm\CSS\Rule\Rule;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\DeclarationBlock;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\RuleSet;
-use _YabeWebfont\Sabberworm\CSS\Value\CSSFunction;
-use _YabeWebfont\Sabberworm\CSS\Value\Value;
-use _YabeWebfont\Sabberworm\CSS\Value\ValueList;
+use JooosiFonDeps\Sabberworm\CSS\Property\Selector;
+use JooosiFonDeps\Sabberworm\CSS\Rule\Rule;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\DeclarationBlock;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\RuleSet;
+use JooosiFonDeps\Sabberworm\CSS\Value\CSSFunction;
+use JooosiFonDeps\Sabberworm\CSS\Value\Value;
+use JooosiFonDeps\Sabberworm\CSS\Value\ValueList;
 /**
  * A `CSSBlockList` is a `CSSList` whose `DeclarationBlock`s are guaranteed to contain valid declaration blocks or
  * at-rules.
@@ -102,9 +102,9 @@ abstract class CSSBlockList extends CSSList
                     $aResult[] = $oSelector;
                 } else {
                     $sComparator = '===';
-                    $aSpecificitySearch = \explode(' ', $sSpecificitySearch);
+                    $aSpecificitySearch = explode(' ', $sSpecificitySearch);
                     $iTargetSpecificity = $aSpecificitySearch[0];
-                    if (\count($aSpecificitySearch) > 1) {
+                    if (count($aSpecificitySearch) > 1) {
                         $sComparator = $aSpecificitySearch[0];
                         $iTargetSpecificity = $aSpecificitySearch[1];
                     }

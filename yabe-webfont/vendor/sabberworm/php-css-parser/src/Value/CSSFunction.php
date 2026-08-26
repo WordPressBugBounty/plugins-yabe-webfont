@@ -1,12 +1,12 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\SourceException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\SourceException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
 /**
  * A `CSSFunction` represents a special kind of value that also contains a function name and where the values are the
  * function’s arguments. It also handles equals-sign-separated argument lists like `filter: alpha(opacity=90);`.

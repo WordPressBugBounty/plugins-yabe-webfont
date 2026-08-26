@@ -1,14 +1,14 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\CSSList;
+namespace JooosiFonDeps\Sabberworm\CSS\CSSList;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\SourceException;
-use _YabeWebfont\Sabberworm\CSS\Property\Selector;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\DeclarationBlock;
-use _YabeWebfont\Sabberworm\CSS\RuleSet\RuleSet;
-use _YabeWebfont\Sabberworm\CSS\Value\Value;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\SourceException;
+use JooosiFonDeps\Sabberworm\CSS\Property\Selector;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\DeclarationBlock;
+use JooosiFonDeps\Sabberworm\CSS\RuleSet\RuleSet;
+use JooosiFonDeps\Sabberworm\CSS\Value\Value;
 /**
  * This class represents the root of a parsed CSS file. It contains all top-level CSS contents: mostly declaration
  * blocks, but also any at-rules encountered (`Import` and `Charset`).
@@ -88,7 +88,7 @@ class Document extends CSSBlockList
         $sSearchString = null;
         if ($mElement === null) {
             $mElement = $this;
-        } elseif (\is_string($mElement)) {
+        } elseif (is_string($mElement)) {
             $sSearchString = $mElement;
             $mElement = $this;
         }

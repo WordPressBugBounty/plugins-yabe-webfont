@@ -8,25 +8,25 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo\Util;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo\Util;
 
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\CallableTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\CallableTypeParameterNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\ConstTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\ThisTypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\TypeNode;
-use _YabeWebfont\PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
-use _YabeWebfont\Symfony\Component\PropertyInfo\PhpStan\NameScope;
-use _YabeWebfont\Symfony\Component\PropertyInfo\Type;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\PhpDoc\ParamTagValueNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\PhpDoc\PhpDocTagValueNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\PhpDoc\ReturnTagValueNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\PhpDoc\VarTagValueNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\ArrayShapeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\ArrayTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\CallableTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\CallableTypeParameterNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\ConstTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\GenericTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\IdentifierTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\NullableTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\ThisTypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\TypeNode;
+use JooosiFonDeps\PHPStan\PhpDocParser\Ast\Type\UnionTypeNode;
+use JooosiFonDeps\Symfony\Component\PropertyInfo\PhpStan\NameScope;
+use JooosiFonDeps\Symfony\Component\PropertyInfo\Type;
 /**
  * Transforms a php doc tag value to a {@link Type} instance.
  *
@@ -41,7 +41,7 @@ final class PhpStanTypeHelper
      *
      * @return Type[]
      */
-    public function getTypes(PhpDocTagValueNode $node, NameScope $nameScope) : array
+    public function getTypes(PhpDocTagValueNode $node, NameScope $nameScope): array
     {
         if ($node instanceof ParamTagValueNode || $node instanceof ReturnTagValueNode || $node instanceof VarTagValueNode) {
             return $this->compressNullableType($this->extractTypes($node->type, $nameScope));
@@ -56,7 +56,7 @@ final class PhpStanTypeHelper
      *
      * @return Type[]
      */
-    private function compressNullableType(array $types) : array
+    private function compressNullableType(array $types): array
     {
         $firstTypeIndex = null;
         $nullableTypeIndex = null;
@@ -76,12 +76,12 @@ final class PhpStanTypeHelper
             $types[$firstTypeIndex] = new Type($firstType->getBuiltinType(), \true, $firstType->getClassName(), $firstType->isCollection(), $firstType->getCollectionKeyTypes(), $firstType->getCollectionValueTypes());
             unset($types[$nullableTypeIndex]);
         }
-        return \array_values($types);
+        return array_values($types);
     }
     /**
      * @return Type[]
      */
-    private function extractTypes(TypeNode $node, NameScope $nameScope) : array
+    private function extractTypes(TypeNode $node, NameScope $nameScope): array
     {
         if ($node instanceof UnionTypeNode) {
             $types = [];
@@ -103,7 +103,7 @@ final class PhpStanTypeHelper
             }
             $collection = $mainType->isCollection() || \is_a($mainType->getClassName(), \Traversable::class, \true) || \is_a($mainType->getClassName(), \ArrayAccess::class, \true);
             // it's safer to fall back to other extractors if the generic type is too abstract
-            if (!$collection && !\class_exists($mainType->getClassName())) {
+            if (!$collection && !class_exists($mainType->getClassName())) {
                 return [];
             }
             $collectionKeyTypes = $mainType->getCollectionKeyTypes();

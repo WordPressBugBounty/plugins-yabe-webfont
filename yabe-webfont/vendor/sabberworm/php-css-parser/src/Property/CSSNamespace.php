@@ -1,9 +1,9 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Property;
+namespace JooosiFonDeps\Sabberworm\CSS\Property;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
 /**
  * `CSSNamespace` represents an `@namespace` rule.
  */
@@ -110,7 +110,7 @@ class CSSNamespace implements AtRule
     {
         $aResult = [$this->mUrl];
         if ($this->sPrefix) {
-            \array_unshift($aResult, $this->sPrefix);
+            array_unshift($aResult, $this->sPrefix);
         }
         return $aResult;
     }
@@ -121,7 +121,7 @@ class CSSNamespace implements AtRule
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<array-key, Comment>

@@ -1,15 +1,15 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\RuleSet;
+namespace JooosiFonDeps\Sabberworm\CSS\RuleSet;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\Comment\Commentable;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
-use _YabeWebfont\Sabberworm\CSS\Rule\Rule;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Commentable;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\Rule\Rule;
 /**
  * This class is a container for individual 'Rule's.
  *
@@ -75,7 +75,7 @@ abstract class RuleSet implements Renderable, Commentable
                     try {
                         $sConsume = $oParserState->consumeUntil(["\n", ";", '}'], \true);
                         // We need to “unfind” the matches to the end of the ruleSet as this will be matched later
-                        if ($oParserState->streql(\substr($sConsume, -1), '}')) {
+                        if ($oParserState->streql(substr($sConsume, -1), '}')) {
                             $oParserState->backtrack(1);
                         } else {
                             while ($oParserState->comes(';')) {
@@ -114,9 +114,9 @@ abstract class RuleSet implements Renderable, Commentable
         if (!isset($this->aRules[$sRule])) {
             $this->aRules[$sRule] = [];
         }
-        $iPosition = \count($this->aRules[$sRule]);
+        $iPosition = count($this->aRules[$sRule]);
         if ($oSibling !== null) {
-            $iSiblingPos = \array_search($oSibling, $this->aRules[$sRule], \true);
+            $iSiblingPos = array_search($oSibling, $this->aRules[$sRule], \true);
             if ($iSiblingPos !== \false) {
                 $iPosition = $iSiblingPos;
                 $oRule->setPosition($oSibling->getLineNo(), $oSibling->getColNo() - 1);
@@ -125,13 +125,13 @@ abstract class RuleSet implements Renderable, Commentable
         if ($oRule->getLineNo() === 0 && $oRule->getColNo() === 0) {
             //this node is added manually, give it the next best line
             $rules = $this->getRules();
-            $pos = \count($rules);
+            $pos = count($rules);
             if ($pos > 0) {
                 $last = $rules[$pos - 1];
                 $oRule->setPosition($last->getLineNo() + 1, 0);
             }
         }
-        \array_splice($this->aRules[$sRule], $iPosition, 0, [$oRule]);
+        array_splice($this->aRules[$sRule], $iPosition, 0, [$oRule]);
     }
     /**
      * Returns all rules matching the given rule name
@@ -159,11 +159,11 @@ abstract class RuleSet implements Renderable, Commentable
         foreach ($this->aRules as $sName => $aRules) {
             // Either no search rule is given or the search rule matches the found rule exactly
             // or the search rule ends in “-” and the found rule starts with the search rule.
-            if (!$mRule || $sName === $mRule || \strrpos($mRule, '-') === \strlen($mRule) - \strlen('-') && (\strpos($sName, $mRule) === 0 || $sName === \substr($mRule, 0, -1))) {
-                $aResult = \array_merge($aResult, $aRules);
+            if (!$mRule || $sName === $mRule || strrpos($mRule, '-') === strlen($mRule) - strlen('-') && (strpos($sName, $mRule) === 0 || $sName === substr($mRule, 0, -1))) {
+                $aResult = array_merge($aResult, $aRules);
             }
         }
-        \usort($aResult, function (Rule $first, Rule $second) {
+        usort($aResult, function (Rule $first, Rule $second) {
             if ($first->getLineNo() === $second->getLineNo()) {
                 return $first->getColNo() - $second->getColNo();
             }
@@ -242,7 +242,7 @@ abstract class RuleSet implements Renderable, Commentable
                 // Either no search rule is given or the search rule matches the found rule exactly
                 // or the search rule ends in “-” and the found rule starts with the search rule or equals it
                 // (without the trailing dash).
-                if (!$mRule || $sName === $mRule || \strrpos($mRule, '-') === \strlen($mRule) - \strlen('-') && (\strpos($sName, $mRule) === 0 || $sName === \substr($mRule, 0, -1))) {
+                if (!$mRule || $sName === $mRule || strrpos($mRule, '-') === strlen($mRule) - strlen('-') && (strpos($sName, $mRule) === 0 || $sName === substr($mRule, 0, -1))) {
                     unset($this->aRules[$sName]);
                 }
             }
@@ -266,7 +266,7 @@ abstract class RuleSet implements Renderable, Commentable
         $bIsFirst = \true;
         $oNextLevel = $oOutputFormat->nextLevel();
         foreach ($this->getRules() as $oRule) {
-            $sRendered = $oNextLevel->safely(function () use($oRule, $oNextLevel) {
+            $sRendered = $oNextLevel->safely(function () use ($oRule, $oNextLevel) {
                 return $oRule->render($oNextLevel);
             });
             if ($sRendered === null) {
@@ -293,7 +293,7 @@ abstract class RuleSet implements Renderable, Commentable
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<string, Comment>

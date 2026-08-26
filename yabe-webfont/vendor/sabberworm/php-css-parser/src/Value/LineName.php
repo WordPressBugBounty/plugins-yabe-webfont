@@ -1,11 +1,11 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
 class LineName extends ValueList
 {
     /**

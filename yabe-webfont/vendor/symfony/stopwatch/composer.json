@@ -21,7 +21,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Symfony\\Component\\Stopwatch\\": ""
+            "JooosiFonDeps\\Symfony\\Component\\Stopwatch\\": ""
         },
         "exclude-from-classmap": [
             "\/Tests\/"

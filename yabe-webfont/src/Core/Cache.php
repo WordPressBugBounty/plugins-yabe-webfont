@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,18 +9,21 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Core;
+namespace JooosiFon\Core;
 
-use Yabe\Webfont\Utils\Common;
-use Yabe\Webfont\Utils\Config;
-use Yabe\Webfont\Utils\Font;
-use Yabe\Webfont\Utils\Notice;
-use Yabe\Webfont\Utils\Upload;
-use _YabeWebfont\YABE_WEBFONT;
+use JooosiFonDeps\JOOOSI_FON;
+use JooosiFon\Core\Cache\FontCacheSnapshotBuilder;
+use JooosiFon\Core\Cache\FontCssRenderer;
+use JooosiFon\Core\Cache\FontPreloadRenderer;
+use JooosiFon\Upgrade\LegacyRebrandUpgrade;
+use JooosiFon\Utils\Common;
+use JooosiFon\Utils\Config;
+use JooosiFon\Utils\Notice;
 /**
  * Manage the cache of fonts for the frontpage.
  *
  * @author Joshua Gugun Siagian <suabahasa@gmail.com>
+ * @todo Remove all legacy Yabe Webfont hook shims completely in Jooosi Fon 3.0.0.
  */
 class Cache
 {
@@ -35,276 +38,348 @@ class Cache
     /**
      * @var string
      */
-    public const CACHE_DIR = '/yabe-webfont/cache/';
+    public const CACHE_DIR = '/jooosi-fon/cache/';
     /**
      * @var string
      */
     public static $typekit_embed = 'css';
     public function __construct()
     {
-        \add_filter('cron_schedules', fn($schedules) => $this->filter_cron_schedules($schedules));
-        \add_action('a!yabe/webfont/core/cache:build_cache', fn() => $this->build_cache());
+        $this->migrate_legacy_scheduled_cache();
+        add_action('a!jooosi/fon/core/cache:build_cache', fn() => $this->build_cache());
         // listen to fonts event for cache build (async/scheduled)
-        \add_action('a!yabe/webfont/api/font:fonts_event_async', fn() => $this->schedule_cache(), 10, 1);
+        add_action('a!jooosi/fon/api/font:fonts_event_async', fn() => $this->schedule_cache(), 10, 1);
         // listen to fonts event for cache build (sync)
-        \add_action('a!yabe/webfont/api/font:fonts_event', fn() => $this->build_cache(), 10, 1);
+        add_action('a!jooosi/fon/api/font:fonts_event', fn() => $this->build_cache(), 10, 1);
         // listen to theme switch for cache build (async/scheduled)
-        \add_action('switch_theme', fn() => $this->schedule_cache(), 1000001);
+        add_action('switch_theme', fn() => $this->schedule_cache(), 1000001);
         // listen to Config change for cache build (async/scheduled)
-        \add_action('f!yabe/webfont/api/setting/option:after_store', fn() => $this->schedule_cache(), 10, 1);
+        add_action('f!jooosi/fon/api/setting/option:after_store', fn() => $this->schedule_cache(), 10, 1);
         // listen to plugin upgrade for cache build (async/scheduled)
-        \add_action('a!yabe/webfont/plugins:upgrade_plugin_end', fn() => $this->schedule_cache(), 10, 1);
+        add_action('a!jooosi/fon/plugins:upgrade_plugin_end', fn() => $this->schedule_cache(), 10, 1);
+        $this->maybeRebuildAfterLegacyUpgrade();
     }
-    public function filter_cron_schedules($schedules)
+    public function schedule_cache(): void
     {
-        if (!\array_key_exists('minutely', $schedules)) {
-            $schedules['minutely'] = ['interval' => \MINUTE_IN_SECONDS, 'display' => \__('Once Minutely', 'yabe-webfont')];
-        }
-        return $schedules;
-    }
-    public function schedule_cache()
-    {
-        if (!\wp_next_scheduled('a!yabe/webfont/core/cache:build_cache')) {
-            \wp_schedule_single_event(\time() + 10, 'a!yabe/webfont/core/cache:build_cache');
+        self::updateBuildStatus(['state' => 'pending', 'requested_at' => time(), 'changed' => \false, 'warnings' => [], 'error' => '']);
+        if (!wp_next_scheduled('a!jooosi/fon/core/cache:build_cache')) {
+            $scheduled = wp_schedule_single_event(time() + 10, 'a!jooosi/fon/core/cache:build_cache');
+            if ($scheduled === \false) {
+                self::updateBuildStatus(['state' => 'failed', 'error' => 'The cache build could not be scheduled.', 'completed_at' => time()]);
+            }
         }
     }
-    public static function get_cache_path(string $file_path = '') : string
+    public static function get_cache_path(string $file_path = ''): string
     {
-        return \wp_upload_dir()['basedir'] . self::CACHE_DIR . $file_path;
+        return wp_upload_dir()['basedir'] . self::CACHE_DIR . $file_path;
     }
-    public static function get_cache_url(string $file_path = '') : string
+    public static function get_cache_url(string $file_path = ''): string
     {
-        return \wp_upload_dir()['baseurl'] . self::CACHE_DIR . $file_path;
+        return wp_upload_dir()['baseurl'] . self::CACHE_DIR . $file_path;
     }
-    public function build_cache()
+    public static function get_versioned_cache_url(string $filePath): string
     {
-        $css = self::build_css();
-        $payload = \sprintf("/*\n! %s v%s | %s\n*/\n\n%s", Common::plugin_data('Name'), YABE_WEBFONT::VERSION, \date('Y-m-d H:i:s', \time()), $css);
+        $url = self::get_cache_url($filePath);
+        $version = self::get_cache_version($filePath);
+        return $version !== null ? add_query_arg('ver', $version, $url) : $url;
+    }
+    public static function get_cache_version(string $filePath): ?string
+    {
+        $path = self::get_cache_path($filePath);
+        if (!is_readable($path)) {
+            return null;
+        }
+        $hash = hash_file('sha256', $path);
+        return is_string($hash) ? substr($hash, 0, 16) : null;
+    }
+    public function build_cache(): void
+    {
         try {
-            Common::save_file($payload, self::get_cache_path(self::CSS_CACHE_FILE));
+            $lock = $this->acquireBuildLock();
         } catch (\Throwable $throwable) {
-            Notice::error(\sprintf('Failed to build Fonts CSS cache: %s', $throwable->getMessage()));
+            $message = sprintf('Failed to start the font cache build: %s', $throwable->getMessage());
+            self::updateBuildStatus(['state' => 'failed', 'completed_at' => time(), 'changed' => \false, 'warnings' => [], 'error' => $message]);
+            Notice::error($message, 'jooosi-fon-cache-build', \true);
+            return;
         }
-        $preload_html = self::build_preload();
+        if ($lock === \false) {
+            return;
+        }
+        self::updateBuildStatus(['state' => 'running', 'started_at' => time(), 'changed' => \false, 'warnings' => [], 'error' => '']);
         try {
-            Common::save_file($preload_html, self::get_cache_path(self::PRELOAD_HTML_FILE));
+            $artifacts = self::buildArtifacts();
+            $payload = sprintf("/*\n! %s v%s\n*/\n\n%s", Common::plugin_data('Name'), JOOOSI_FON::VERSION, $artifacts['css']);
+            $cssPath = self::get_cache_path(self::CSS_CACHE_FILE);
+            $preloadPath = self::get_cache_path(self::PRELOAD_HTML_FILE);
+            $changed = !self::contentsMatch($cssPath, $payload) || !self::contentsMatch($preloadPath, $artifacts['preload']);
+            if ($changed) {
+                self::publishArtifacts($payload, $artifacts['preload'], $cssPath, $preloadPath);
+                $this->purge_cache_plugin();
+            }
+            self::updateBuildStatus(['state' => 'succeeded', 'completed_at' => time(), 'hash' => hash('sha256', $payload . "\x00" . $artifacts['preload']), 'changed' => $changed, 'warnings' => $artifacts['warnings'], 'error' => '']);
+            do_action('a!jooosi/fon/core/cache:build_succeeded', $changed, $artifacts['warnings']);
         } catch (\Throwable $throwable) {
-            Notice::error(\sprintf('Failed to build Fonts Preload HTML cache: %s', $throwable->getMessage()));
+            $message = sprintf('Failed to build the font cache: %s', $throwable->getMessage());
+            self::updateBuildStatus(['state' => 'failed', 'completed_at' => time(), 'changed' => \false, 'warnings' => [], 'error' => $message]);
+            Notice::error($message, 'jooosi-fon-cache-build', \true);
+            do_action('a!jooosi/fon/core/cache:build_failed', $throwable);
+        } finally {
+            flock($lock, \LOCK_UN);
+            fclose($lock);
         }
-        $this->purge_cache_plugin();
     }
-    public static function build_css() : string
+    public static function build_css(): string
     {
-        /** @var wpdb $wpdb */
-        global $wpdb;
-        $css = '';
-        $sql = "\n            SELECT * FROM {$wpdb->prefix}yabe_webfont_fonts \n            WHERE status = 1\n                AND deleted_at IS NULL\n        ";
-        $result = $wpdb->get_results($sql);
-        if (empty($result)) {
-            return $css;
-        }
-        $format_precedence = ['woff2' => 1, 'woff' => 2, 'ttf' => 3, 'otf' => 4, 'eot' => 5];
-        // Adobe Fonts
-        $project_id = Config::get('adobe_fonts.project_id', null);
-        if ($project_id !== null) {
-            // check if the $result array contain item.type = 'adobe-fonts'
-            $any_adobe_fonts = \array_search('adobe-fonts', \array_column($result, 'type'), \true);
-            if ($any_adobe_fonts !== \false) {
-                $css .= self::get_kit_css($project_id);
-            }
-        }
-        foreach ($result as $row) {
-            try {
-                $metadata = \json_decode($row->metadata, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $metadata = \json_decode(\gzuncompress(\base64_decode($row->metadata)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            try {
-                $font_faces = \json_decode($row->font_faces, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $font_faces = \json_decode(\gzuncompress(\base64_decode($row->font_faces)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            $font_faces = Upload::refresh_font_faces_attachment_url($font_faces);
-            foreach ($font_faces as $font_face) {
-                if ($font_face->comment) {
-                    $css .= "/* {$font_face->comment} */\n";
-                }
-                $css .= "@font-face {\n";
-                $css .= "\tfont-family: '{$row->family}';\n";
-                $css .= "\tfont-style: {$font_face->style};\n";
-                $wght = $font_face->weight ?: '400';
-                $wdth = $font_face->width ?: '100%';
-                $css .= "\tfont-weight: {$wght};\n";
-                $css .= "\tfont-stretch: {$wdth};\n";
-                $display = $font_face->display ?: $metadata->display;
-                $css .= "\tfont-display: {$display};\n";
-                if ($font_face->files !== []) {
-                    \usort($font_face->files, static fn($a, $b) => $format_precedence[$a->extension] <=> $format_precedence[$b->extension]);
-                    $css .= "\tsrc: ";
-                    $files = \array_map(static fn($f) => \sprintf("url('%s') format(\"%s\")", $f->attachment_url, Upload::mime_keyword($f->extension)), $font_face->files);
-                    $css .= \implode(",\n\t\t", $files);
-                    $css .= ";\n";
-                }
-                if ($font_face->unicodeRange) {
-                    $css .= "\tunicode-range: {$font_face->unicodeRange};\n";
-                }
-                $css .= "}\n\n";
-            }
-        }
-        // CSS custom properties (variables)
-        $css .= ":root {\n";
-        foreach ($result as $row) {
-            try {
-                $metadata = \json_decode($row->metadata, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $metadata = \json_decode(\gzuncompress(\base64_decode($row->metadata)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            $selectorParts = [];
-            $fallbackFamily = '';
-            // if property selector is exists
-            if (\property_exists($metadata, 'selector') && $metadata->selector) {
-                $selectorParts = \explode('|', $metadata->selector);
-                $selectorParts = \array_map('trim', $selectorParts);
-                $selectorParts = \array_filter($selectorParts);
-                $fallbackFamily = isset($selectorParts[1]) ? ', ' . $selectorParts[1] : '';
-            }
-            $value = \sprintf("'%s'%s", $row->family, $fallbackFamily);
-            $name = Font::css_custom_property($row->family);
-            $css .= "\t{$name}: {$value};\n";
-        }
-        $css .= "}\n\n";
-        foreach ($result as $row) {
-            try {
-                $metadata = \json_decode($row->metadata, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $metadata = \json_decode(\gzuncompress(\base64_decode($row->metadata)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            try {
-                $font_faces = \json_decode($row->font_faces, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $font_faces = \json_decode(\gzuncompress(\base64_decode($row->font_faces)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            $font_faces = Upload::refresh_font_faces_attachment_url($font_faces);
-            $selectorParts = [];
-            if (\property_exists($metadata, 'selector') && $metadata->selector) {
-                $selectorParts = \explode('|', $metadata->selector);
-                $selectorParts = \array_map('trim', $selectorParts);
-                $selectorParts = \array_filter($selectorParts);
-                if (isset($selectorParts[0]) && $selectorParts[0]) {
-                    $css .= \sprintf("%s {\n\tfont-family: %s;\n}\n\n", $selectorParts[0], Font::css_variable($row->family));
-                }
-            }
-            foreach ($font_faces as $font_face) {
-                if ($font_face->selector) {
-                    $css .= "{$font_face->selector} {\n";
-                    $css .= \sprintf("\tfont-family: %s;\n", Font::css_variable($row->family));
-                    $css .= "\tfont-style: {$font_face->style};\n";
-                    $css .= "\tfont-weight: {$font_face->weight};\n";
-                    $css .= "}\n\n";
-                }
-            }
-        }
-        /**
-         * @param string $css The CSS content
-         * @param array $result The result of the SQL query
-         * @return string The CSS content
-         */
-        $css = \apply_filters('f!yabe/webfont/core/cache:build_css.append_content', $css, $result);
-        if (\defined('WP_DEBUG') && \WP_DEBUG) {
-            // replace tabs with 2 spaces
-            $css = \preg_replace('#\\t#', '  ', $css);
-        } else {
-            // remove new lines and tabs
-            $css = \preg_replace('#\\n#', '', $css);
-            $css = \preg_replace('#\\t#', '', $css);
-        }
-        return $css;
+        return self::buildArtifacts()['css'];
     }
-    public static function build_preload() : string
+    public static function build_preload(): string
     {
-        /** @var wpdb $wpdb */
-        global $wpdb;
-        $html = '';
-        $sql = "\n            SELECT metadata, font_faces, type FROM {$wpdb->prefix}yabe_webfont_fonts\n            WHERE status = 1\n                AND deleted_at IS NULL\n        ";
-        $result = $wpdb->get_results($sql);
-        if (empty($result)) {
-            return $html;
-        }
-        $preload_files = [];
-        foreach ($result as $row) {
-            try {
-                $metadata = \json_decode($row->metadata, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $metadata = \json_decode(\gzuncompress(\base64_decode($row->metadata)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            try {
-                $font_faces = \json_decode($row->font_faces, null, 512, \JSON_THROW_ON_ERROR);
-            } catch (\JsonException $e) {
-                $font_faces = \json_decode(\gzuncompress(\base64_decode($row->font_faces)), null, 512, \JSON_THROW_ON_ERROR);
-            }
-            $font_faces = Upload::refresh_font_faces_attachment_url($font_faces);
-            foreach ($font_faces as $font_face) {
-                if ($metadata->preload || \property_exists($font_face, 'preload') && $font_face->preload) {
-                    foreach ($font_face->files as $file) {
-                        if ($file->mime !== 'font/woff2') {
-                            continue;
-                        }
-                        $preload_files[] = ['href' => $file->attachment_url, 'type' => $file->mime];
-                    }
-                }
-            }
-        }
-        $preload_files = \array_unique($preload_files, \SORT_REGULAR);
-        foreach ($preload_files as $preload_file) {
-            $html .= \sprintf('<link rel="preload" href="%s" as="font" type="%s" crossorigin>' . \PHP_EOL, $preload_file['href'], $preload_file['type']);
-        }
-        // Adobe Fonts
-        if (self::$typekit_embed === 'js') {
-            $project_id = Config::get('adobe_fonts.project_id', null);
-            if ($project_id !== null) {
-                // check if the $result array contain item.type = 'adobe-fonts'
-                $any_adobe_fonts = \array_search('adobe-fonts', \array_column($result, 'type'), \true);
-                if ($any_adobe_fonts !== \false) {
-                    $html .= self::get_kit_js($project_id);
-                }
-            }
-        }
-        return $html;
+        return self::buildArtifacts()['preload'];
     }
-    public static function get_kit_css($kit_id) : string
+    public static function get_kit_css($kit_id, ?array &$warnings = null): string
     {
-        $css = '';
-        $response = \wp_remote_get(\sprintf('https://use.typekit.net/%s.css', $kit_id));
-        if (\is_wp_error($response) || \wp_remote_retrieve_response_code($response) !== 200) {
-            // The kit is only available in JS
-            if (\wp_remote_retrieve_response_code($response) === 412) {
-                self::$typekit_embed = 'js';
-            }
-            return $css;
+        $kitId = trim((string) $kit_id);
+        if (preg_match('/^[a-zA-Z0-9_-]{1,100}$/', $kitId) !== 1) {
+            self::adobeWarning($warnings, 'Adobe Fonts CSS was skipped because the project ID is invalid.');
+            return '';
         }
-        $body = \wp_remote_retrieve_body($response);
-        if (\is_wp_error($body)) {
-            return $css;
+        $cachePath = self::get_cache_path('adobe/' . hash('sha256', $kitId) . '.css');
+        $cachedCss = is_readable($cachePath) ? file_get_contents($cachePath) : \false;
+        $cachedCss = is_string($cachedCss) ? $cachedCss : '';
+        if (!self::isSafeStylesheet($cachedCss)) {
+            $cachedCss = '';
         }
-        return $css . ($body . "\n\n");
+        $ttl = max(300, (int) apply_filters('f!jooosi/fon/core/cache:adobe_css_ttl', 12 * \HOUR_IN_SECONDS));
+        if ($cachedCss !== '' && filemtime($cachePath) > time() - $ttl) {
+            return $cachedCss;
+        }
+        $response = wp_safe_remote_get(sprintf('https://use.typekit.net/%s.css', rawurlencode($kitId)), ['timeout' => 15, 'redirection' => 2, 'limit_response_size' => 2 * \MB_IN_BYTES]);
+        if (is_wp_error($response)) {
+            return self::adobeFallback($cachedCss, $warnings, 'Adobe Fonts could not be refreshed.');
+        }
+        $status = wp_remote_retrieve_response_code($response);
+        if ($status === 412) {
+            self::$typekit_embed = 'js';
+            return '';
+        }
+        if ($status !== 200) {
+            return self::adobeFallback($cachedCss, $warnings, sprintf('Adobe Fonts returned HTTP %d.', $status));
+        }
+        $body = wp_remote_retrieve_body($response);
+        if (!is_string($body) || !self::isSafeStylesheet($body)) {
+            return self::adobeFallback($cachedCss, $warnings, 'Adobe Fonts returned an invalid stylesheet.');
+        }
+        try {
+            self::publishArtifact($body, $cachePath);
+        } catch (\Throwable $throwable) {
+            self::adobeWarning($warnings, 'Adobe Fonts CSS was refreshed but could not be cached separately.');
+        }
+        return $body;
     }
-    public static function get_kit_js($kit_id) : string
+    public static function get_kit_js($kit_id): string
     {
-        $js = '';
-        $response = \wp_remote_get(\sprintf('https://use.typekit.net/%s.js', $kit_id));
-        if (\is_wp_error($response) || \wp_remote_retrieve_response_code($response) !== 200) {
-            return $js;
+        $kitId = trim((string) $kit_id);
+        if (preg_match('/^[a-zA-Z0-9_-]{1,100}$/', $kitId) !== 1) {
+            return '';
         }
-        $body = \wp_remote_retrieve_body($response);
-        if (\is_wp_error($body)) {
-            return $js;
+        $response = wp_safe_remote_get(sprintf('https://use.typekit.net/%s.js', rawurlencode($kitId)), ['timeout' => 15, 'redirection' => 2, 'limit_response_size' => 2 * \MB_IN_BYTES]);
+        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+            return '';
         }
-        $js .= '<script type="text/javascript">';
+        $body = wp_remote_retrieve_body($response);
+        if (!is_string($body) || trim($body) === '') {
+            return '';
+        }
+        $js = '<script type="text/javascript">';
         $js .= $body;
         $js .= "\n\n";
-        $js .= \sprintf('try{Typekit.load({kitId:"%s",scriptTimeout:3E3,async:true});}catch(e){}', $kit_id);
+        $js .= sprintf('try{Typekit.load({kitId:%s,scriptTimeout:3E3,async:true});}catch(e){}', wp_json_encode($kitId));
         $js .= '</script>';
         return "\n\n" . $js . "\n\n";
+    }
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getBuildStatus(): array
+    {
+        $status = get_option(JOOOSI_FON::WP_OPTION . '_cache_build_status', []);
+        return is_array($status) ? $status : [];
+    }
+    /**
+     * @return array{css: string, preload: string, warnings: string[]}
+     */
+    private static function buildArtifacts(): array
+    {
+        self::$typekit_embed = 'css';
+        $snapshot = (new FontCacheSnapshotBuilder())->build();
+        $warnings = $snapshot['warnings'];
+        $adobeCss = '';
+        $projectId = trim((string) Config::get('adobe_fonts.project_id', ''));
+        $hasAdobeFonts = in_array('adobe-fonts', array_column($snapshot['fonts'], 'type'), \true);
+        if ($projectId !== '' && $hasAdobeFonts) {
+            $adobeCss = self::get_kit_css($projectId, $warnings);
+        }
+        $css = (new FontCssRenderer())->render($snapshot['fonts'], $adobeCss);
+        /**
+         * @param string $css The CSS content
+         * @param array $rows The active database rows
+         * @return string The CSS content
+         */
+        $css = apply_filters('f!jooosi/fon/core/cache:build_css.append_content', $css, $snapshot['rows']);
+        $css = apply_filters_deprecated('f!yabe/webfont/core/cache:build_css.append_content', [$css, $snapshot['rows']], '2.1.0', 'f!jooosi/fon/core/cache:build_css.append_content');
+        if (!is_string($css)) {
+            throw new \UnexpectedValueException('The font CSS filter must return a string.');
+        }
+        $preloadLimit = (int) apply_filters('f!jooosi/fon/core/cache:preload_limit', 6);
+        $preload = (new FontPreloadRenderer())->render($snapshot['fonts'], $preloadLimit);
+        if (self::$typekit_embed === 'js' && $projectId !== '' && $hasAdobeFonts) {
+            $preload .= self::get_kit_js($projectId);
+        }
+        foreach ($warnings as $warning) {
+            do_action('a!jooosi/fon/core/cache:build_warning', $warning);
+        }
+        return ['css' => $css, 'preload' => $preload, 'warnings' => array_values(array_unique($warnings))];
+    }
+    /**
+     * @return resource|false
+     */
+    private function acquireBuildLock()
+    {
+        $directory = self::get_cache_path();
+        if (!is_dir($directory) && !wp_mkdir_p($directory)) {
+            throw new \RuntimeException('The font cache directory could not be created.');
+        }
+        $lock = fopen($directory . '.build.lock', 'c');
+        if ($lock === \false) {
+            throw new \RuntimeException('The font cache build lock could not be opened.');
+        }
+        if (!flock($lock, \LOCK_EX | \LOCK_NB)) {
+            fclose($lock);
+            return \false;
+        }
+        return $lock;
+    }
+    private static function contentsMatch(string $path, string $expected): bool
+    {
+        if (!is_readable($path)) {
+            return \false;
+        }
+        $contents = file_get_contents($path);
+        return is_string($contents) && hash_equals(hash('sha256', $expected), hash('sha256', $contents));
+    }
+    private static function publishArtifacts(string $css, string $preload, string $cssPath, string $preloadPath): void
+    {
+        $cssTemp = self::stageArtifact($css, $cssPath);
+        $preloadTemp = null;
+        try {
+            $preloadTemp = self::stageArtifact($preload, $preloadPath);
+            if (!rename($preloadTemp, $preloadPath)) {
+                throw new \RuntimeException('The font preload cache could not be published.');
+            }
+            $preloadTemp = null;
+            if (!rename($cssTemp, $cssPath)) {
+                throw new \RuntimeException('The font CSS cache could not be published.');
+            }
+            $cssTemp = null;
+        } finally {
+            if (is_string($cssTemp) && file_exists($cssTemp)) {
+                unlink($cssTemp);
+            }
+            if (is_string($preloadTemp) && file_exists($preloadTemp)) {
+                unlink($preloadTemp);
+            }
+        }
+    }
+    private static function publishArtifact(string $contents, string $path): void
+    {
+        $temporaryPath = self::stageArtifact($contents, $path);
+        try {
+            if (!rename($temporaryPath, $path)) {
+                throw new \RuntimeException('The cache artifact could not be published.');
+            }
+            $temporaryPath = null;
+        } finally {
+            if (is_string($temporaryPath) && file_exists($temporaryPath)) {
+                unlink($temporaryPath);
+            }
+        }
+    }
+    private static function stageArtifact(string $contents, string $path): string
+    {
+        $directory = dirname($path);
+        if (!is_dir($directory) && !wp_mkdir_p($directory)) {
+            throw new \RuntimeException('The cache artifact directory could not be created.');
+        }
+        $temporaryPath = tempnam($directory, '.jooosi-fon-');
+        if (!is_string($temporaryPath)) {
+            throw new \RuntimeException('A temporary cache artifact could not be created.');
+        }
+        $written = file_put_contents($temporaryPath, $contents, \LOCK_EX);
+        if ($written === \false || $written !== strlen($contents)) {
+            unlink($temporaryPath);
+            throw new \RuntimeException('A cache artifact could not be written completely.');
+        }
+        $permissions = defined('FS_CHMOD_FILE') ? \FS_CHMOD_FILE : 0644;
+        chmod($temporaryPath, $permissions);
+        return $temporaryPath;
+    }
+    /**
+     * @param array<string, mixed> $status
+     */
+    private static function updateBuildStatus(array $status): void
+    {
+        update_option(JOOOSI_FON::WP_OPTION . '_cache_build_status', array_merge(self::getBuildStatus(), $status), \false);
+    }
+    private static function adobeWarning(?array &$warnings, string $message): void
+    {
+        if ($warnings !== null && count($warnings) < 100) {
+            $warnings[] = $message;
+        }
+    }
+    private static function adobeFallback(string $cachedCss, ?array &$warnings, string $message): string
+    {
+        if ($cachedCss === '') {
+            throw new \RuntimeException($message . ' No cached stylesheet is available.');
+        }
+        self::adobeWarning($warnings, $message . ' The last-known-good stylesheet was retained.');
+        return $cachedCss;
+    }
+    private static function isSafeStylesheet(string $css): bool
+    {
+        return trim($css) !== '' && stripos($css, '</style') === \false;
+    }
+    /**
+     * @todo Remove this legacy cron migration completely in Jooosi Fon 3.0.0.
+     */
+    private function migrate_legacy_scheduled_cache(): void
+    {
+        $legacyHook = 'a!yabe/webfont/core/cache:build_cache';
+        $hook = 'a!jooosi/fon/core/cache:build_cache';
+        $legacyTimestamp = wp_next_scheduled($legacyHook);
+        if ($legacyTimestamp === \false) {
+            return;
+        }
+        if (!wp_next_scheduled($hook)) {
+            wp_schedule_single_event(max(time() + 1, $legacyTimestamp), $hook);
+        }
+        wp_clear_scheduled_hook($legacyHook);
+    }
+    /**
+     * Rebuild generated files immediately after upload paths have moved so a
+     * frontend request never prints cache content containing legacy URLs.
+     *
+     * @todo Remove this legacy cache rebuild completely in Jooosi Fon 3.0.0.
+     */
+    private function maybeRebuildAfterLegacyUpgrade(): void
+    {
+        if (get_option(LegacyRebrandUpgrade::CACHE_REBUILD_OPTION, \false) === \false) {
+            return;
+        }
+        self::updateBuildStatus(['state' => 'pending', 'requested_at' => time(), 'changed' => \false, 'warnings' => [], 'error' => '']);
+        $this->build_cache();
+        if ((self::getBuildStatus()['state'] ?? null) === 'succeeded') {
+            delete_option(LegacyRebrandUpgrade::CACHE_REBUILD_OPTION);
+        }
     }
     /**
      * Clear the cache from various cache plugins.
@@ -312,42 +387,44 @@ class Cache
     private function purge_cache_plugin()
     {
         /**
-         * WordPress Object Cache
+         * Only invalidate this plugin's font catalog. Flushing the complete
+         * WordPress object cache can create a site-wide performance spike.
          * @see https://developer.wordpress.org/reference/classes/wp_object_cache/
          */
-        \wp_cache_flush();
+        \wp_cache_delete('get_fonts', JOOOSI_FON::WP_OPTION);
+        do_action('a!jooosi/fon/core/cache:before_page_cache_purge');
         /**
          * WP Rocket
          * @see https://docs.wp-rocket.me/article/92-rocketcleandomain
          */
-        if (\function_exists('rocket_clean_domain')) {
+        if (function_exists('rocket_clean_domain')) {
             \rocket_clean_domain();
         }
         /**
          * WP Super Cache
          * @see https://github.com/Automattic/wp-super-cache/blob/a0872032b1b3fc6847f490eadfabf74c12ad0135/wp-cache-phase2.php#L3013
          */
-        if (\function_exists('wp_cache_clear_cache')) {
+        if (function_exists('wp_cache_clear_cache')) {
             \wp_cache_clear_cache();
         }
         /**
          * W3 Total Cache
          * @see https://github.com/BoldGrid/w3-total-cache/blob/3a094493064ea60d727b3389dee813639860ef49/w3-total-cache-api.php#L259
          */
-        if (\function_exists('w3tc_flush_all')) {
+        if (function_exists('w3tc_flush_all')) {
             \w3tc_flush_all();
         }
         /**
          * WP Fastest Cache
          * @see https://www.wpfastestcache.com/tutorial/delete-the-cache-by-calling-the-function/
          */
-        if (\function_exists('wpfc_clear_all_cache')) {
+        if (function_exists('wpfc_clear_all_cache')) {
             \wpfc_clear_all_cache(\true);
         }
         /**
          * LiteSpeed Cache
          * @see https://docs.litespeedtech.com/lscache/lscwp/api/#purge-all-existing-caches
          */
-        \do_action('litespeed_purge_all');
+        do_action('litespeed_purge_all');
     }
 }

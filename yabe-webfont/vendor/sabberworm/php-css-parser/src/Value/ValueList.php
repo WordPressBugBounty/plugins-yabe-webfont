@@ -1,8 +1,8 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
 /**
  * A `ValueList` represents a lists of `Value`s, separated by some separation character
  * (mostly `,`, whitespace, or `/`).
@@ -32,7 +32,7 @@ abstract class ValueList extends Value
     public function __construct($aComponents = [], $sSeparator = ',', $iLineNo = 0)
     {
         parent::__construct($iLineNo);
-        if (!\is_array($aComponents)) {
+        if (!is_array($aComponents)) {
             $aComponents = [$aComponents];
         }
         $this->aComponents = $aComponents;

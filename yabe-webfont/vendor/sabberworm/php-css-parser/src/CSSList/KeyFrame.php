@@ -1,9 +1,9 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\CSSList;
+namespace JooosiFonDeps\Sabberworm\CSS\CSSList;
 
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Property\AtRule;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Property\AtRule;
 class KeyFrame extends CSSList implements AtRule
 {
     /**

@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,25 +9,26 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Utils;
+namespace JooosiFon\Utils;
 
 use Exception;
-use _YabeWebfont\Symfony\Component\PropertyAccess\Exception\AccessException;
-use _YabeWebfont\Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
-use _YabeWebfont\Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
-use _YabeWebfont\Symfony\Component\PropertyAccess\PropertyAccess;
-use _YabeWebfont\YABE_WEBFONT;
+use JooosiFonDeps\JOOOSI_FON;
+use JooosiFonDeps\Symfony\Component\PropertyAccess\Exception\AccessException;
+use JooosiFonDeps\Symfony\Component\PropertyAccess\Exception\InvalidArgumentException;
+use JooosiFonDeps\Symfony\Component\PropertyAccess\Exception\UnexpectedTypeException;
+use JooosiFonDeps\Symfony\Component\PropertyAccess\PropertyAccess;
 /**
  * Accessor for the plugin config.
  *
  * @author Joshua Gugun Siagian <suabahasa@gmail.com>
+ * @todo Remove all legacy Yabe Webfont filter shims completely in Jooosi Fon 3.0.0.
  */
 class Config
 {
     /**
      * Stores the instance of PropertyAccessor, implementing a Singleton pattern.
      */
-    private static ?\_YabeWebfont\Symfony\Component\PropertyAccess\PropertyAccessorInterface $propertyAccessor = null;
+    private static ?\JooosiFonDeps\Symfony\Component\PropertyAccess\PropertyAccessorInterface $propertyAccessor = null;
     public static function propertyAccessor()
     {
         if (!isset(self::$propertyAccessor)) {
@@ -45,8 +46,9 @@ class Config
      */
     public static function get($path, $defaultValue = null)
     {
-        $options = \json_decode(\get_option(YABE_WEBFONT::WP_OPTION . '_options', '{}'), null, 512, \JSON_THROW_ON_ERROR);
-        $options = \apply_filters('f!yabe/webfont/api/setting/option:index_options', $options);
+        $options = json_decode(get_option(JOOOSI_FON::WP_OPTION . '_options', '{}'), null, 512, \JSON_THROW_ON_ERROR);
+        $options = apply_filters('f!jooosi/fon/api/setting/option:index_options', $options);
+        $options = apply_filters_deprecated('f!yabe/webfont/api/setting/option:index_options', [$options], '2.1.0', 'f!jooosi/fon/api/setting/option:index_options');
         try {
             return self::propertyAccessor()->getValue($options, $path);
         } catch (Exception $exception) {
@@ -65,9 +67,10 @@ class Config
      */
     public static function set($path, $value)
     {
-        $options = \json_decode(\get_option(YABE_WEBFONT::WP_OPTION . '_options', '{}'), null, 512, \JSON_THROW_ON_ERROR);
-        $options = \apply_filters('f!yabe/webfont/api/setting/option:index_options', $options);
+        $options = json_decode(get_option(JOOOSI_FON::WP_OPTION . '_options', '{}'), null, 512, \JSON_THROW_ON_ERROR);
+        $options = apply_filters('f!jooosi/fon/api/setting/option:index_options', $options);
+        $options = apply_filters_deprecated('f!yabe/webfont/api/setting/option:index_options', [$options], '2.1.0', 'f!jooosi/fon/api/setting/option:index_options');
         self::propertyAccessor()->setValue($options, $path, $value);
-        \update_option(YABE_WEBFONT::WP_OPTION . '_options', \json_encode($options, \JSON_THROW_ON_ERROR));
+        update_option(JOOOSI_FON::WP_OPTION . '_options', json_encode($options, \JSON_THROW_ON_ERROR));
     }
 }

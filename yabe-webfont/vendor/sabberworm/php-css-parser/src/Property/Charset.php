@@ -1,10 +1,10 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Property;
+namespace JooosiFonDeps\Sabberworm\CSS\Property;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Value\CSSString;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Value\CSSString;
 /**
  * Class representing an `@charset` rule.
  *
@@ -104,7 +104,7 @@ class Charset implements AtRule
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<array-key, Comment>

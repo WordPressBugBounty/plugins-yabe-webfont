@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,12 +9,12 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Builder\Elementor;
+namespace JooosiFon\Builder\Elementor;
 
-use Yabe\Webfont\Admin\AdminPage;
-use Yabe\Webfont\Builder\BuilderInterface;
-use Yabe\Webfont\Utils\Config;
-use Yabe\Webfont\Utils\Font;
+use JooosiFon\Admin\AdminPage;
+use JooosiFon\Builder\BuilderInterface;
+use JooosiFon\Utils\Config;
+use JooosiFon\Utils\Font;
 /**
  * Elementor integration.
  *
@@ -28,17 +28,17 @@ class Main implements BuilderInterface
          * Disable Elementor's built-in Google Fonts.
          */
         if (Config::get('builder_integrations.disable_google_fonts.elementor', \true)) {
-            \add_filter('pre_option_elementor_google_font', static fn($pre_option, $option, $default) => '0', 1000001, 3);
-            \add_filter('pre_update_option_elementor_google_font', static fn($value, $old_value, $option) => '0', 1000001, 3);
+            add_filter('pre_option_elementor_google_font', static fn($pre_option, $option, $default) => '0', 1000001, 3);
+            add_filter('pre_update_option_elementor_google_font', static fn($value, $old_value, $option) => '0', 1000001, 3);
         }
         /**
          * Register fonts with 'custom' category for Atomic Widgets compatibility.
          * Atomic Widgets (Elementor v4) only supports: system, custom, googlefonts
          */
-        \add_filter('elementor/fonts/additional_fonts', fn($fonts) => $this->filter_elementor_fonts($fonts), 1000001);
-        \add_action('admin_menu', static fn() => AdminPage::add_redirect_submenu_page('elementor'), 1000001);
+        add_filter('elementor/fonts/additional_fonts', fn($fonts) => $this->filter_elementor_fonts($fonts), 1000001);
+        add_action('admin_menu', static fn() => AdminPage::add_redirect_submenu_page('elementor'), 1000001);
     }
-    public function get_name() : string
+    public function get_name(): string
     {
         return 'elementor';
     }

@@ -35,7 +35,7 @@
     },
     "autoload": {
         "psr-4": {
-            "_YabeWebfont\\Symfony\\Contracts\\Service\\": ""
+            "JooosiFonDeps\\Symfony\\Contracts\\Service\\": ""
         }
     },
     "minimum-stability": "dev",

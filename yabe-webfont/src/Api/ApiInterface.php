@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Yabe package.
+ * This file is part of the Jooosi Fon package.
  *
  * (c) Joshua Gugun Siagian <suabahasa@gmail.com>
  *
@@ -9,18 +9,18 @@
  * file that was distributed with this source code.
  */
 declare (strict_types=1);
-namespace Yabe\Webfont\Api;
+namespace JooosiFon\Api;
 
 interface ApiInterface
 {
     /**
      * Get the API endpoint prefix.
      */
-    public function get_prefix() : string;
+    public function get_prefix(): string;
     /**
      * Register custom REST API endpoints as described in the [WordPress REST API Handbook](https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/).
      *
      * @see https://developer.wordpress.org/reference/functions/register_rest_route/
      */
-    public function register_custom_endpoints() : void;
+    public function register_custom_endpoints(): void;
 }

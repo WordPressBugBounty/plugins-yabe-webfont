@@ -33,7 +33,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Hidehalo\\Nanoid\\": "src"
+                    "JooosiFonDeps\\Hidehalo\\Nanoid\\": "src"
                 }
             },
             "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -59,6 +59,49 @@
                 "source": "https:\/\/github.com\/hidehalo\/nanoid-php\/tree\/1.1.13"
             },
             "install-path": "..\/hidehalo\/nanoid-php"
+        },
+        {
+            "name": "nabasa\/vp-wp",
+            "version": "v0.3.2",
+            "version_normalized": "0.3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https:\/\/github.com\/nabasa-dev\/vp-wp.git",
+                "reference": "6bac3a284c43206075c0c833e35f35d2aeda3e92"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https:\/\/api.github.com\/repos\/nabasa-dev\/vp-wp\/zipball\/6bac3a284c43206075c0c833e35f35d2aeda3e92",
+                "reference": "6bac3a284c43206075c0c833e35f35d2aeda3e92",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.4"
+            },
+            "time": "2026-06-05T16:36:35+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "vp-wp.php"
+                ]
+            },
+            "notification-url": "https:\/\/packagist.org\/downloads\/",
+            "license": [
+                "MIT"
+            ],
+            "description": "WordPress integration for Vite+.",
+            "homepage": "https:\/\/github.com\/nabasa-dev\/vp-wp",
+            "keywords": [
+                "vite",
+                "vite-plus",
+                "wordpress"
+            ],
+            "support": {
+                "issues": "https:\/\/github.com\/nabasa-dev\/vp-wp\/issues",
+                "source": "https:\/\/github.com\/nabasa-dev\/vp-wp"
+            },
+            "install-path": "..\/nabasa\/vp-wp"
         },
         {
             "name": "paragonie\/random_compat",
@@ -136,7 +179,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Psr\\Container\\": "src\/"
+                    "JooosiFonDeps\\Psr\\Container\\": "src\/"
                 }
             },
             "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -163,55 +206,6 @@
                 "source": "https:\/\/github.com\/php-fig\/container\/tree\/1.1.2"
             },
             "install-path": "..\/psr\/container"
-        },
-        {
-            "name": "rosua\/migrations",
-            "version": "dev-master",
-            "version_normalized": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https:\/\/github.com\/orgrosua\/migrations.git",
-                "reference": "64f57aafc0db4c3d36250fb50cab2a3d0bfb2a8d"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https:\/\/api.github.com\/repos\/orgrosua\/migrations\/zipball\/64f57aafc0db4c3d36250fb50cab2a3d0bfb2a8d",
-                "reference": "64f57aafc0db4c3d36250fb50cab2a3d0bfb2a8d",
-                "shasum": ""
-            },
-            "require": {
-                "symfony\/finder": "^5.4"
-            },
-            "require-dev": {
-                "rector\/rector": "^0.14.5",
-                "symplify\/easy-coding-standard": "^11.1",
-                "wp-cli\/wp-cli": "^2.7"
-            },
-            "time": "2024-03-25T06:41:36+00:00",
-            "default-branch": true,
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-4": {
-                    "_YabeWebfont\\Rosua\\Migrations\\": "src\/"
-                }
-            },
-            "notification-url": "https:\/\/packagist.org\/downloads\/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Rosua",
-                    "email": "id@rosua.org"
-                }
-            ],
-            "description": "Database Migrations tool for WordPress plugins",
-            "support": {
-                "issues": "https:\/\/github.com\/orgrosua\/migrations\/issues",
-                "source": "https:\/\/github.com\/orgrosua\/migrations\/tree\/master"
-            },
-            "install-path": "..\/rosua\/migrations"
         },
         {
             "name": "sabberworm\/php-css-parser",
@@ -248,7 +242,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Sabberworm\\CSS\\": "src\/"
+                    "JooosiFonDeps\\Sabberworm\\CSS\\": "src\/"
                 }
             },
             "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -376,7 +370,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Component\\Finder\\": ""
+                    "JooosiFonDeps\\Symfony\\Component\\Finder\\": ""
                 },
                 "exclude-from-classmap": [
                     "\/Tests\/"
@@ -863,7 +857,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Component\\PropertyAccess\\": ""
+                    "JooosiFonDeps\\Symfony\\Component\\PropertyAccess\\": ""
                 },
                 "exclude-from-classmap": [
                     "\/Tests\/"
@@ -960,7 +954,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Component\\PropertyInfo\\": ""
+                    "JooosiFonDeps\\Symfony\\Component\\PropertyInfo\\": ""
                 },
                 "exclude-from-classmap": [
                     "\/Tests\/"
@@ -1049,7 +1043,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Contracts\\Service\\": ""
+                    "JooosiFonDeps\\Symfony\\Contracts\\Service\\": ""
                 }
             },
             "notification-url": "https:\/\/packagist.org\/downloads\/",
@@ -1119,7 +1113,7 @@
             "installation-source": "dist",
             "autoload": {
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Component\\Stopwatch\\": ""
+                    "JooosiFonDeps\\Symfony\\Component\\Stopwatch\\": ""
                 },
                 "exclude-from-classmap": [
                     "\/Tests\/"
@@ -1200,7 +1194,7 @@
                     "Resources\/functions.php"
                 ],
                 "psr-4": {
-                    "_YabeWebfont\\Symfony\\Component\\String\\": ""
+                    "JooosiFonDeps\\Symfony\\Component\\String\\": ""
                 },
                 "exclude-from-classmap": [
                     "\/Tests\/"

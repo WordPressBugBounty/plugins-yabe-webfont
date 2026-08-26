@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Psr\Container;
+namespace JooosiFonDeps\Psr\Container;
 
 /**
  * No entry was found in the container.

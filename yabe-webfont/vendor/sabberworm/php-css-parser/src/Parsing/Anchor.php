@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Parsing;
+namespace JooosiFonDeps\Sabberworm\CSS\Parsing;
 
 /**
  * @internal since 8.7.0

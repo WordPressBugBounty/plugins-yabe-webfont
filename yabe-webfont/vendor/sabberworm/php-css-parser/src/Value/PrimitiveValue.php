@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
 abstract class PrimitiveValue extends Value
 {

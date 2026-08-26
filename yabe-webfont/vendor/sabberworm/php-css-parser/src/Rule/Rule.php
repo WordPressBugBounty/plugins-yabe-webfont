@@ -1,16 +1,16 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Rule;
+namespace JooosiFonDeps\Sabberworm\CSS\Rule;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Comment;
-use _YabeWebfont\Sabberworm\CSS\Comment\Commentable;
-use _YabeWebfont\Sabberworm\CSS\OutputFormat;
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
-use _YabeWebfont\Sabberworm\CSS\Value\RuleValueList;
-use _YabeWebfont\Sabberworm\CSS\Value\Value;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Comment;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Commentable;
+use JooosiFonDeps\Sabberworm\CSS\OutputFormat;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\Value\RuleValueList;
+use JooosiFonDeps\Sabberworm\CSS\Value\Value;
 /**
  * `Rule`s just have a string key (the rule) and a 'Value'.
  *
@@ -115,7 +115,7 @@ class Rule implements Renderable, Commentable
      */
     private static function listDelimiterForRule($sRule)
     {
-        if (\preg_match('/^font($|-)/', $sRule)) {
+        if (preg_match('/^font($|-)/', $sRule)) {
             return [',', '/', ' '];
         }
         switch ($sRule) {
@@ -194,12 +194,12 @@ class Rule implements Renderable, Commentable
     public function setValues(array $aSpaceSeparatedValues)
     {
         $oSpaceSeparatedList = null;
-        if (\count($aSpaceSeparatedValues) > 1) {
+        if (count($aSpaceSeparatedValues) > 1) {
             $oSpaceSeparatedList = new RuleValueList(' ', $this->iLineNo);
         }
         foreach ($aSpaceSeparatedValues as $aCommaSeparatedValues) {
             $oCommaSeparatedList = null;
-            if (\count($aCommaSeparatedValues) > 1) {
+            if (count($aCommaSeparatedValues) > 1) {
                 $oCommaSeparatedList = new RuleValueList(',', $this->iLineNo);
             }
             foreach ($aCommaSeparatedValues as $mValue) {
@@ -244,11 +244,11 @@ class Rule implements Renderable, Commentable
                 $aResult[] = [$mValue];
                 continue;
             }
-            if ($this->mValue->getListSeparator() === ' ' || \count($aResult) === 0) {
+            if ($this->mValue->getListSeparator() === ' ' || count($aResult) === 0) {
                 $aResult[] = [];
             }
             foreach ($mValue->getListComponents() as $mValue) {
-                $aResult[\count($aResult) - 1][] = $mValue;
+                $aResult[count($aResult) - 1][] = $mValue;
             }
         }
         return $aResult;
@@ -264,7 +264,7 @@ class Rule implements Renderable, Commentable
      */
     public function addValue($mValue, $sType = ' ')
     {
-        if (!\is_array($mValue)) {
+        if (!is_array($mValue)) {
             $mValue = [$mValue];
         }
         if (!$this->mValue instanceof RuleValueList || $this->mValue->getListSeparator() !== $sType) {
@@ -349,7 +349,7 @@ class Rule implements Renderable, Commentable
             $sResult .= $this->mValue;
         }
         if (!empty($this->aIeHack)) {
-            $sResult .= ' \\' . \implode('\\', $this->aIeHack);
+            $sResult .= ' \\' . implode('\\', $this->aIeHack);
         }
         if ($this->bIsImportant) {
             $sResult .= ' !important';
@@ -364,7 +364,7 @@ class Rule implements Renderable, Commentable
      */
     public function addComments(array $aComments)
     {
-        $this->aComments = \array_merge($this->aComments, $aComments);
+        $this->aComments = array_merge($this->aComments, $aComments);
     }
     /**
      * @return array<array-key, Comment>

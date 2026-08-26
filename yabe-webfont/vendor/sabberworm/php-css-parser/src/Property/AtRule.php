@@ -1,9 +1,9 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Property;
+namespace JooosiFonDeps\Sabberworm\CSS\Property;
 
-use _YabeWebfont\Sabberworm\CSS\Comment\Commentable;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\Comment\Commentable;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
 interface AtRule extends Renderable, Commentable
 {
     /**

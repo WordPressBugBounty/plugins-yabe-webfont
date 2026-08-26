@@ -1,12 +1,12 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Value;
+namespace JooosiFonDeps\Sabberworm\CSS\Value;
 
-use _YabeWebfont\Sabberworm\CSS\Parsing\ParserState;
-use _YabeWebfont\Sabberworm\CSS\Parsing\SourceException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedEOFException;
-use _YabeWebfont\Sabberworm\CSS\Parsing\UnexpectedTokenException;
-use _YabeWebfont\Sabberworm\CSS\Renderable;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\ParserState;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\SourceException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedEOFException;
+use JooosiFonDeps\Sabberworm\CSS\Parsing\UnexpectedTokenException;
+use JooosiFonDeps\Sabberworm\CSS\Renderable;
 /**
  * Abstract base class for specific classes of CSS values: `Size`, `Color`, `CSSString` and `URL`, and another
  * abstract subclass `ValueList`.
@@ -43,11 +43,11 @@ abstract class Value implements Renderable
         $oParserState->consumeWhiteSpace();
         //Build a list of delimiters and parsed values
         while (!($oParserState->comes('}') || $oParserState->comes(';') || $oParserState->comes('!') || $oParserState->comes(')') || $oParserState->comes('\\') || $oParserState->isEnd())) {
-            if (\count($aStack) > 0) {
+            if (count($aStack) > 0) {
                 $bFoundDelimiter = \false;
                 foreach ($aListDelimiters as $sDelimiter) {
                     if ($oParserState->comes($sDelimiter)) {
-                        \array_push($aStack, $oParserState->consume($sDelimiter));
+                        array_push($aStack, $oParserState->consume($sDelimiter));
                         $oParserState->consumeWhiteSpace();
                         $bFoundDelimiter = \true;
                         break;
@@ -55,15 +55,15 @@ abstract class Value implements Renderable
                 }
                 if (!$bFoundDelimiter) {
                     //Whitespace was the list delimiter
-                    \array_push($aStack, ' ');
+                    array_push($aStack, ' ');
                 }
             }
-            \array_push($aStack, self::parsePrimitiveValue($oParserState));
+            array_push($aStack, self::parsePrimitiveValue($oParserState));
             $oParserState->consumeWhiteSpace();
         }
         // Convert the list to list objects
         foreach ($aListDelimiters as $sDelimiter) {
-            $iStackLength = \count($aStack);
+            $iStackLength = count($aStack);
             if ($iStackLength === 1) {
                 return $aStack[0];
             }
@@ -133,7 +133,7 @@ abstract class Value implements Renderable
     {
         $oValue = null;
         $oParserState->consumeWhiteSpace();
-        if (\is_numeric($oParserState->peek()) || $oParserState->comes('-.') && \is_numeric($oParserState->peek(1, 2)) || ($oParserState->comes('-') || $oParserState->comes('.')) && \is_numeric($oParserState->peek(1, 1))) {
+        if (is_numeric($oParserState->peek()) || $oParserState->comes('-.') && is_numeric($oParserState->peek(1, 2)) || ($oParserState->comes('-') || $oParserState->comes('.')) && is_numeric($oParserState->peek(1, 1))) {
             $oValue = Size::parse($oParserState);
         } elseif ($oParserState->comes('#') || $oParserState->comes('rgb', \true) || $oParserState->comes('hsl', \true)) {
             $oValue = Color::parse($oParserState);
@@ -190,7 +190,7 @@ abstract class Value implements Renderable
                 // Max length is 2 six digit code points + the dash(-) between them
             }
             $sRange .= $oParserState->consume(1);
-        } while (\strlen($sRange) < $iCodepointMaxLength && \preg_match("/[A-Fa-f0-9\\?-]/", $oParserState->peek()));
+        } while (strlen($sRange) < $iCodepointMaxLength && preg_match("/[A-Fa-f0-9\\?-]/", $oParserState->peek()));
         return "U+{$sRange}";
     }
     /**

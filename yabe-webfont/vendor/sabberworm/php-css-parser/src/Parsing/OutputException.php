@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Parsing;
+namespace JooosiFonDeps\Sabberworm\CSS\Parsing;
 
 /**
  * Thrown if the CSS parser attempts to print something invalid.

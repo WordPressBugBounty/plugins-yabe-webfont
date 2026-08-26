@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Sabberworm\CSS\Parsing;
+namespace JooosiFonDeps\Sabberworm\CSS\Parsing;
 
 /**
  * Thrown if the CSS parser encounters a token it did not expect.
@@ -40,7 +40,7 @@ class UnexpectedTokenException extends SourceException
         } elseif ($this->sMatchType === 'identifier') {
             $sMessage = "Identifier expected. Got “{$sFound}”";
         } elseif ($this->sMatchType === 'custom') {
-            $sMessage = \trim("{$sExpected} {$sFound}");
+            $sMessage = trim("{$sExpected} {$sFound}");
         }
         parent::__construct($sMessage, $iLineNo);
     }

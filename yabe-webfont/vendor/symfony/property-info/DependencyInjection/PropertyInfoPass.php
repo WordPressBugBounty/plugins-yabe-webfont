@@ -8,12 +8,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo\DependencyInjection;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo\DependencyInjection;
 
-use _YabeWebfont\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
-use _YabeWebfont\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use _YabeWebfont\Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
-use _YabeWebfont\Symfony\Component\DependencyInjection\ContainerBuilder;
+use JooosiFonDeps\Symfony\Component\DependencyInjection\Argument\IteratorArgument;
+use JooosiFonDeps\Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use JooosiFonDeps\Symfony\Component\DependencyInjection\Compiler\PriorityTaggedServiceTrait;
+use JooosiFonDeps\Symfony\Component\DependencyInjection\ContainerBuilder;
 /**
  * Adds extractors to the property_info service.
  *

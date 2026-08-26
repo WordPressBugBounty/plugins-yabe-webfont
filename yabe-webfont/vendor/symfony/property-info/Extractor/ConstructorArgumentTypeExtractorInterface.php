@@ -8,9 +8,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyInfo\Extractor;
+namespace JooosiFonDeps\Symfony\Component\PropertyInfo\Extractor;
 
-use _YabeWebfont\Symfony\Component\PropertyInfo\Type;
+use JooosiFonDeps\Symfony\Component\PropertyInfo\Type;
 /**
  * Infers the constructor argument type.
  *
@@ -27,5 +27,5 @@ interface ConstructorArgumentTypeExtractorInterface
      *
      * @internal
      */
-    public function getTypesFromConstructor(string $class, string $property) : ?array;
+    public function getTypesFromConstructor(string $class, string $property): ?array;
 }

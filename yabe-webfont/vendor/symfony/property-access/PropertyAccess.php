@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\PropertyAccess;
+namespace JooosiFonDeps\Symfony\Component\PropertyAccess;
 
 /**
  * Entry point of the PropertyAccess component.
@@ -20,11 +20,11 @@ final class PropertyAccess
     /**
      * Creates a property accessor with the default configuration.
      */
-    public static function createPropertyAccessor() : PropertyAccessor
+    public static function createPropertyAccessor(): PropertyAccessor
     {
         return self::createPropertyAccessorBuilder()->getPropertyAccessor();
     }
-    public static function createPropertyAccessorBuilder() : PropertyAccessorBuilder
+    public static function createPropertyAccessorBuilder(): PropertyAccessorBuilder
     {
         return new PropertyAccessorBuilder();
     }

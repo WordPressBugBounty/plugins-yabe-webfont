@@ -1,15 +1,15 @@
-function yabe_webfont_add_fonts(options) {
+function jooosi_fon_add_fonts(options) {
 	const { __ } = wp.i18n;
-	const yabe_webfonts = [
+	const jooosi_fonts = [
 		{
 			type: 'group',
-			label: __('Yabe Webfont', 'yabe-webfont'),
-			options: yabeWebfontKadenceBlocks.fonts,
+			label: __('Jooosi Fon', 'jooosi-fon'),
+			options: jooosiFonKadenceBlocks.fonts,
 		},
 	];
 
-	options = yabe_webfonts.concat(options);
+	options = jooosi_fonts.concat(options);
 
 	return options;
 }
-wp.hooks.addFilter('kadence.typography_options', 'yabe/webfont/add_fonts', yabe_webfont_add_fonts);
+wp.hooks.addFilter('kadence.typography_options', 'jooosi/fon/add_fonts', jooosi_fon_add_fonts);

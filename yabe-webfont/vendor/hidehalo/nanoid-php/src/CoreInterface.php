@@ -1,6 +1,6 @@
 <?php
 
-namespace _YabeWebfont\Hidehalo\Nanoid;
+namespace JooosiFonDeps\Hidehalo\Nanoid;
 
 interface CoreInterface
 {

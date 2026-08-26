@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace _YabeWebfont\Symfony\Component\Finder\Comparator;
+namespace JooosiFonDeps\Symfony\Component\Finder\Comparator;
 
 /**
  * @author Fabien Potencier <fabien@symfony.com>
@@ -92,10 +92,10 @@ class Comparator
         }
         return $test == $this->target;
     }
-    private function doSetOperator(string $operator) : void
+    private function doSetOperator(string $operator): void
     {
         if (!\in_array($operator, ['>', '<', '>=', '<=', '==', '!='])) {
-            throw new \InvalidArgumentException(\sprintf('Invalid operator "%s".', $operator));
+            throw new \InvalidArgumentException(sprintf('Invalid operator "%s".', $operator));
         }
         $this->operator = $operator;
     }

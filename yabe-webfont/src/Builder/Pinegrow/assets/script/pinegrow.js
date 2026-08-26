@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     // add stylesheet
-    window.frames[0].pinegrow.getSelectedPage().addStylesheet(window.yabeWebfontPinegrow.stylesheet_url);
+    window.frames[0].pinegrow.getSelectedPage().addStylesheet(window.jooosiFonPinegrow.stylesheet_url);
 
     // style tab
     await new Promise(resolve => {
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', async function () {
     });
 
     window.frames[0].$.fn.crsa.defaults.rulesDefinition.sections.text.fields['font-family'].options = function () {
-        return window.yabeWebfontPinegrow.font_families || [];
+        return window.jooosiFonPinegrow.font_families || [];
     };
 
     // design tab
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     window.frames[0].pinegrow.fontLibrary.removeAll();
 
-    window.yabeWebfontPinegrow.font_families.forEach(font => {
+    window.jooosiFonPinegrow.font_families.forEach(font => {
         const pfs = new fontSystemClass({
             type: 'system',
             family: font.family,
