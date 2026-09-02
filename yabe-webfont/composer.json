@@ -40,14 +40,18 @@
         "check-ecs": "vendor\/bin\/ecs check --ansi",
         "fix-ecs": "vendor\/bin\/ecs check --fix --ansi",
         "test-api": "@php tests\/api-support.php",
-        "test-cache": "@php tests\/cache-renderer.php",
+        "test-cache": [
+            "@php tests\/cache-renderer.php",
+            "@php tests\/cache-build.php"
+        ],
         "test-license": [
             "@php tests\/licensing-manager.php normal",
             "@php tests\/licensing-manager.php late"
         ],
         "test-migrations": [
             "@php tests\/migration-sources.php",
-            "@php tests\/database-migrations.php"
+            "@php tests\/database-migrations.php",
+            "@php tests\/font-table.php"
         ],
         "test-upgrades": "@php tests\/legacy-rebrand-upgrade.php"
     },
